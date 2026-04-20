@@ -72,7 +72,7 @@ export function initMapPanel(container) {
         shipMarker = L.marker([pos.lat, pos.lng], { icon: shipIcon(true) })
           .bindTooltip(`
             <div style="min-width:130px">
-              <div style="font-weight:700;font-size:13px;margin-bottom:4px">${ship.name}</div>
+              <div style="font-weight:700;font-size:16px;margin-bottom:4px">${ship.name}</div>
               <div style="font-size:12px">速度：<strong>${snapshot.speed} 節</strong></div>
               <div style="font-size:12px">ETA：<strong>${snapshot.eta}</strong></div>
             </div>
@@ -82,7 +82,7 @@ export function initMapPanel(container) {
         shipMarker.setLatLng([pos.lat, pos.lng]);
         shipMarker.setTooltipContent(`
           <div style="min-width:130px">
-            <div style="font-weight:700;font-size:13px;margin-bottom:4px">${ship.name}</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:4px">${ship.name}</div>
             <div style="font-size:12px">速度：<strong>${snapshot.speed} 節</strong></div>
             <div style="font-size:12px">ETA：<strong>${snapshot.eta}</strong></div>
           </div>

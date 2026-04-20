@@ -61,7 +61,7 @@ export function renderShipOverview(container, ship, snapshot) {
         <div class="fuel-bar-wrap">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px">
             <span style="font-size:12px;color:var(--text-muted)">當前油量</span>
-            <span style="font-size:12px;font-weight:600">${snapshot.fuelStatus.tonnes} 公噸 / ${snapshot.fuelStatus.capacity} 公噸</span>
+            <span style="font-size:16px;font-weight:600">${snapshot.fuelStatus.tonnes} 公噸 / ${snapshot.fuelStatus.capacity} 公噸</span>
           </div>
           <div class="fuel-bar">
             <div class="fuel-fill ${fuelBarCls}" style="width:${snapshot.fuelStatus.percentage}%;background:var(--${fuelBarCls === 'success' ? 'success' : fuelBarCls === 'warning' ? 'warning' : 'danger'})"></div>

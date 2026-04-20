@@ -19,7 +19,7 @@ html, body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Segoe UI', system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 /* ── Layout ─────────────────────────────────────────── */
@@ -47,13 +47,6 @@ html, body {
 
 #map-panel-pane {
   height: var(--map-h);
-  border-right: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-}
-
-#risk-panel-pane {
-  height: var(--map-h);
-  overflow-y: auto;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -70,7 +63,6 @@ html, body {
 
 #timeline-bar {
   height: 72px;
-  flex-shrink: 0;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -131,7 +123,7 @@ html, body {
 
 .s-ship-name {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.3;
 }
 
@@ -164,7 +156,7 @@ html, body {
 }
 
 .overview-ship-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
   margin-right: 12px;
@@ -201,7 +193,7 @@ html, body {
 }
 
 .overview-field-value {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -236,7 +228,7 @@ html, body {
 .sub-row:last-child { border-bottom: none; }
 
 .sub-label { font-size: 12px; color: var(--text-muted); }
-.sub-value { font-size: 12px; font-weight: 500; }
+.sub-value { font-size: 16px; font-weight: 500; }
 .sub-value.warning { color: var(--warning); }
 .sub-value.danger  { color: var(--danger); }
 .sub-value.success { color: var(--success); }
@@ -274,7 +266,7 @@ html, body {
 }
 
 .risk-name {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -348,7 +340,7 @@ html, body {
 .event-type-badge.low    { background: rgba(63,185,80,.18);  color: var(--success); border: 1px solid rgba(63,185,80,.35); }
 
 .event-body-desc {
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.4;
 }
 
@@ -375,7 +367,7 @@ html, body {
   align-items: center;
 }
 
-.crew-name { font-size: 12px; font-weight: 600; }
+.crew-name { font-size: 16px; font-weight: 600; }
 .crew-rank { font-size: 12px; color: var(--text-muted); }
 
 .service-bar-wrap { width: 90px; }
@@ -412,7 +404,7 @@ html, body {
   gap: 8px;
 }
 
-.cert-name { font-size: 12px; flex: 1; }
+.cert-name { font-size: 16px; flex: 1; }
 
 .cert-badge {
   font-size: 12px;
@@ -442,7 +434,7 @@ html, body {
   padding: 3px 10px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   transition: background 0.12s, border-color 0.12s;
   flex-shrink: 0;
 }
