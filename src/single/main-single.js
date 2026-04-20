@@ -1,11 +1,11 @@
-import { mockData }           from './data/mockShipData.js';
-import { renderShipList }     from './components/ShipList.js';
-import { renderShipOverview } from './components/ShipOverview.js';
-import { initMapPanel }       from './components/MapPanel.js';
-import { renderRiskPanel }    from './components/RiskPanel.js';
-import { renderEventList }    from './components/EventList.js';
-import { renderCrewPanel }    from './components/CrewPanel.js';
-import { renderTimeline }     from './components/Timeline.js';
+import { mockData } from "./data/mockShipData.js";
+import { renderShipList } from "./components/ShipList.js";
+import { renderShipOverview } from "./components/ShipOverview.js";
+import { initMapPanel } from "./components/MapPanel.js";
+// import { renderRiskPanel }    from './components/RiskPanel.js';
+import { renderEventList } from "./components/EventList.js";
+import { renderCrewPanel } from "./components/CrewPanel.js";
+import { renderTimeline } from "./components/Timeline.js";
 
 /* ── State ──────────────────────────────────────────── */
 
@@ -16,9 +16,15 @@ const state = {
 
 /* ── Helpers ────────────────────────────────────────── */
 
-function ship()     { return mockData.ships.find(s => s.id === state.selectedShipId); }
-function snapshot() { return mockData.snapshots[state.selectedShipId][state.currentStep]; }
-function allSnaps() { return mockData.snapshots[state.selectedShipId]; }
+function ship() {
+  return mockData.ships.find((s) => s.id === state.selectedShipId);
+}
+function snapshot() {
+  return mockData.snapshots[state.selectedShipId][state.currentStep];
+}
+function allSnaps() {
+  return mockData.snapshots[state.selectedShipId];
+}
 
 /* ── Map controller (initialized once) ─────────────── */
 
@@ -31,17 +37,17 @@ function renderContent() {
   const snap = snapshot();
   const snaps = allSnaps();
 
-  renderShipOverview(document.getElementById('ship-overview-pane'), s, snap);
-  renderRiskPanel(document.getElementById('risk-panel-pane'), snap.risk);
-  renderEventList(document.getElementById('event-list-pane'), snap.events);
-  renderCrewPanel(document.getElementById('crew-panel-pane'), s);
+  renderShipOverview(document.getElementById("ship-overview-pane"), s, snap);
+  // renderRiskPanel(document.getElementById('risk-panel-pane'), snap.risk);
+  renderEventList(document.getElementById("event-list-pane"), snap.events);
+  renderCrewPanel(document.getElementById("crew-panel-pane"), s);
 
   if (mapCtrl) mapCtrl.update(s, snap, state.currentStep, snaps);
 }
 
 function renderAll() {
   renderShipList(
-    document.getElementById('ship-list-pane'),
+    document.getElementById("ship-list-pane"),
     mockData.ships,
     mockData.snapshots,
     state.selectedShipId,
@@ -66,9 +72,9 @@ function onTimeStep(step) {
 /* ── Init ───────────────────────────────────────────── */
 
 function init() {
-  mapCtrl = initMapPanel(document.getElementById('map-panel-pane'));
+  mapCtrl = initMapPanel(document.getElementById("map-panel-pane"));
 
-  renderTimeline(document.getElementById('timeline-bar'), onTimeStep);
+  renderTimeline(document.getElementById("timeline-bar"), onTimeStep);
 
   renderAll();
 }
