@@ -4,7 +4,9 @@
       "Bash(mkdir -p d:/Work/_ClaudeCode/SRP-Dashbord-Project/src/data)",
       "Bash(mkdir -p d:/Work/_ClaudeCode/SRP-Dashbord-Project/src/components)",
       "Bash(npm run *)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
