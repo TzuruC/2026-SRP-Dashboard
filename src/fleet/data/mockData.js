@@ -1,5 +1,6 @@
 export const mockData = {
   ships: [
+    // ── delay: true ──────────────────────────────────
     {
       id: 'SHP001',
       name: 'Ever Fortune',
@@ -9,6 +10,28 @@ export const mockData = {
       expectedEta: '2026-04-21T06:00:00Z',
       status: { delay: true, speedAnomaly: false, routeDeviation: false },
     },
+    {
+      id: 'SHP004',
+      name: 'Meridian Bay',
+      lat: 20.33, lng: 118.76,
+      speed: 14.8,
+      eta: '2026-04-21T20:00:00Z',
+      expectedEta: '2026-04-21T16:30:00Z',
+      status: { delay: true, speedAnomaly: false, routeDeviation: true },
+    },
+
+    // ── 提早抵達 ─────────────────────────────────────
+    {
+      id: 'SHP005',
+      name: 'Coral Express',
+      lat: 24.88, lng: 124.11,
+      speed: 22.4,
+      eta: '2026-04-21T06:00:00Z',
+      expectedEta: '2026-04-21T07:30:00Z',
+      status: { delay: false, speedAnomaly: false, routeDeviation: false },
+    },
+
+    // ── 其他異常 / 正常 ───────────────────────────────
     {
       id: 'SHP002',
       name: 'Pacific Pioneer',
@@ -28,31 +51,13 @@ export const mockData = {
       status: { delay: false, speedAnomaly: false, routeDeviation: false },
     },
     {
-      id: 'SHP004',
-      name: 'Meridian Bay',
-      lat: 20.33, lng: 118.76,
-      speed: 14.8,
-      eta: '2026-04-21T20:00:00Z',
-      expectedEta: '2026-04-21T16:30:00Z',
-      status: { delay: true, speedAnomaly: false, routeDeviation: true },
-    },
-    {
-      id: 'SHP005',
-      name: 'Coral Express',
-      lat: 24.88, lng: 124.11,
-      speed: 19.1,
-      eta: '2026-04-21T07:45:00Z',
-      expectedEta: '2026-04-21T07:45:00Z',
-      status: { delay: false, speedAnomaly: false, routeDeviation: false },
-    },
-    {
       id: 'SHP006',
       name: 'Northern Cross',
       lat: 30.22, lng: 123.45,
-      speed: 3.5,
-      eta: '2026-04-22T02:00:00Z',
-      expectedEta: '2026-04-21T22:00:00Z',
-      status: { delay: true, speedAnomaly: true, routeDeviation: false },
+      speed: 9.1,
+      eta: '2026-04-21T23:00:00Z',
+      expectedEta: '2026-04-21T23:00:00Z',
+      status: { delay: false, speedAnomaly: true, routeDeviation: false },
     },
     {
       id: 'SHP007',
@@ -63,24 +68,13 @@ export const mockData = {
       expectedEta: '2026-04-21T12:30:00Z',
       status: { delay: false, speedAnomaly: false, routeDeviation: false },
     },
-    {
-      id: 'SHP008',
-      name: 'Storm Runner',
-      lat: 26.54, lng: 127.32,
-      speed: 11.2,
-      eta: '2026-04-21T18:00:00Z',
-      expectedEta: '2026-04-21T15:00:00Z',
-      status: { delay: true, speedAnomaly: true, routeDeviation: true },
-    },
   ],
   events: [
     { id: 'EVT001', shipId: 'SHP001', type: 'delay',          severity: 'medium', timestamp: '2026-04-20T22:15:00Z' },
     { id: 'EVT002', shipId: 'SHP002', type: 'speedAnomaly',   severity: 'high',   timestamp: '2026-04-20T21:30:00Z' },
     { id: 'EVT003', shipId: 'SHP004', type: 'routeDeviation', severity: 'high',   timestamp: '2026-04-20T20:45:00Z' },
-    { id: 'EVT004', shipId: 'SHP006', type: 'delay',          severity: 'medium', timestamp: '2026-04-20T19:00:00Z' },
-    { id: 'EVT005', shipId: 'SHP006', type: 'speedAnomaly',   severity: 'high',   timestamp: '2026-04-20T18:30:00Z' },
-    { id: 'EVT006', shipId: 'SHP008', type: 'delay',          severity: 'high',   timestamp: '2026-04-20T17:15:00Z' },
-    { id: 'EVT007', shipId: 'SHP008', type: 'speedAnomaly',   severity: 'medium', timestamp: '2026-04-20T16:00:00Z' },
-    { id: 'EVT008', shipId: 'SHP008', type: 'routeDeviation', severity: 'high',   timestamp: '2026-04-20T15:45:00Z' },
+    { id: 'EVT004', shipId: 'SHP004', type: 'delay',          severity: 'medium', timestamp: '2026-04-20T19:30:00Z' },
+    { id: 'EVT005', shipId: 'SHP005', type: 'info',           severity: 'low',    timestamp: '2026-04-20T18:00:00Z' },
+    { id: 'EVT006', shipId: 'SHP006', type: 'speedAnomaly',   severity: 'high',   timestamp: '2026-04-20T17:00:00Z' },
   ],
 };

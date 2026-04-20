@@ -1,10 +1,10 @@
-import { mockData } from "./data/mockData.js";
-import { renderKpiBar } from "./components/kpiBar.js";
-import { renderShipList } from "./components/shipList.js";
-import { initMap } from "./components/mapView.js";
-import { renderAlertPanel } from "./components/alertPanel.js";
-import { renderShipDetail } from "./components/shipDetail.js";
-import { renderTimeline } from "./components/timeline.js";
+import { mockData } from "./fleet/data/mockData.js";
+import { renderKpiBar } from "./fleet/components/kpiBar.js";
+import { renderShipList } from "./fleet/components/shipList.js";
+import { initMap } from "./fleet/components/mapView.js";
+import { renderAlertPanel } from "./fleet/components/alertPanel.js";
+import { renderShipDetail } from "./fleet/components/shipDetail.js";
+import { renderTimeline } from "./fleet/components/timeline.js";
 
 const state = {
   selectedShipId: null,
