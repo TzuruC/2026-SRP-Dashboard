@@ -4,7 +4,7 @@ import { renderShipList } from "./components/shipList.js";
 import { initMap } from "./components/mapView.js";
 import { renderAlertPanel } from "./components/alertPanel.js";
 import { renderShipDetail } from "./components/shipDetail.js";
-// import { renderTimeline }    from './components/timeline.js';
+import { renderTimeline } from "./components/timeline.js";
 
 const state = {
   selectedShipId: null,
@@ -41,7 +41,7 @@ function init() {
   );
 
   mapCtrl = initMap(
-    document.getElementById("map-pane"),
+    document.getElementById("map-container"),
     state.ships,
     selectShip,
   );
@@ -55,9 +55,9 @@ function init() {
 
   renderShipDetail(document.getElementById("detail-pane"), null);
 
-  // renderTimeline(document.getElementById("timeline-pane"), (_step) => {
-  //   // placeholder: future implementation will replay historical ship positions
-  // });
+  renderTimeline(document.getElementById("timeline-pane"), (_step) => {
+    // placeholder: future implementation will replay historical ship positions
+  });
 }
 
 init();

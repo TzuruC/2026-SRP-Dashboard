@@ -27,9 +27,13 @@ body {
 }
 
 #app {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
+  overflow: hidden;
+}
+
+#main-content {
+  height: 100%;
+  overflow: hidden;
 }
 
 #kpi-bar {
@@ -39,9 +43,8 @@ body {
   flex-shrink: 0;
 }
 
-#main-content {
-  flex: 1;
-  overflow: hidden;
+#map-container {
+  min-height: 0;
 }
 
 #timeline-pane {
@@ -59,7 +62,6 @@ body {
 
 #map-pane {
   background: var(--bg-primary);
-  position: relative;
 }
 
 #map {

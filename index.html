@@ -10,18 +10,20 @@
   </head>
   <body>
     <div id="app">
-      <header id="kpi-bar"></header>
       <main id="main-content">
         <div class="row h-100 g-0">
           <aside class="col-2 h-100" id="ship-list-pane"></aside>
-          <section class="col-7 h-100" id="map-pane"></section>
+          <section class="col-7 h-100 d-flex flex-column" id="map-pane">
+            <div id="kpi-bar"></div>
+            <div id="map-container" class="flex-grow-1"></div>
+            <div id="timeline-pane"></div>
+          </section>
           <aside class="col-3 h-100 d-flex flex-column" id="right-pane">
             <div id="alert-pane"></div>
             <div id="detail-pane" class="flex-grow-1"></div>
           </aside>
         </div>
       </main>
-      <footer id="timeline-pane"></footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

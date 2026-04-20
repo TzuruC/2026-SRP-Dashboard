@@ -46,7 +46,8 @@ function tooltipHtml(ship) {
 export function initMap(container, ships, onShipSelect) {
   const mapDiv = document.createElement('div');
   mapDiv.id = 'map';
-  Object.assign(mapDiv.style, { width: '100%', height: '100%' });
+  Object.assign(mapDiv.style, { width: '100%', height: '100%', position: 'absolute', inset: '0' });
+  container.style.position = 'relative';
   container.appendChild(mapDiv);
 
   const map = L.map('map', {
