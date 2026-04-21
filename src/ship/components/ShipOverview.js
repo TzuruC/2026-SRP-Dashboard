@@ -1,4 +1,4 @@
-function delayDisplay(minutes) {
+﻿function delayDisplay(minutes) {
   if (minutes === 0) return { text: '準時', cls: 'success' };
   const h = Math.floor(Math.abs(minutes) / 60);
   const m = Math.abs(minutes) % 60;
@@ -14,11 +14,28 @@ function fuelStatusCls(status) {
   return 'success';
 }
 
+const FUEL_COLORS = { HFO: '#6e7681', MGO: '#58a6ff', VLSFO: '#3fb950' };
+
+function renderFuelRow(f) {
+  const color = FUEL_COLORS[f.type] || '#8b949e';
+  const pct   = f.percentage;
+  return `
+          <div style="padding:6px 0;border-bottom:1px solid var(--border-color)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:12px;color:${color};font-weight:600">${f.name}<span style="color:var(--text-muted);font-weight:400"> (${f.type})</span></span>
+              <span style="font-size:13px;font-weight:600">${f.tonnes} / ${f.capacity} T</span>
+            </div>
+            <div style="height:5px;background:var(--bg-tertiary);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width .3s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:right;margin-top:2px">${pct}%</div>
+          </div>`;
+}
+
 export function renderShipOverview(container, ship, snapshot) {
   const delay = delayDisplay(snapshot.delayMinutes);
-  const fuelCls = fuelStatusCls(snapshot.fuelStatus.status);
-  const fuelBarCls = snapshot.fuelStatus.percentage > 50 ? 'success'
-                   : snapshot.fuelStatus.percentage > 30 ? 'warning' : 'danger';
+  const fuelCls    = fuelStatusCls(snapshot.fuelStatus.status);
+  const overallPct = snapshot.fuelStatus.overallPercentage ?? snapshot.fuelStatus.percentage;
   const po = snapshot.portOperation;
 
   container.innerHTML = `
@@ -58,22 +75,19 @@ export function renderShipOverview(container, ship, snapshot) {
           油量資訊
           <span class="update-time">最後更新：${snapshot.fuelStatus.lastUpdate}</span>
         </div>
-        <div class="fuel-bar-wrap">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span style="font-size:12px;color:var(--text-muted)">當前油量</span>
-            <span style="font-size:16px;font-weight:600">${snapshot.fuelStatus.tonnes} 公噸 / ${snapshot.fuelStatus.capacity} 公噸</span>
-          </div>
-          <div class="fuel-bar">
-            <div class="fuel-fill ${fuelBarCls}" style="width:${snapshot.fuelStatus.percentage}%;background:var(--${fuelBarCls === 'success' ? 'success' : fuelBarCls === 'warning' ? 'warning' : 'danger'})"></div>
-          </div>
-          <div style="font-size:12px;color:var(--text-muted);text-align:right;margin-top:2px">${snapshot.fuelStatus.percentage}%</div>
+        <div style="padding:0 12px">
+          ${(snapshot.fuelStatus.fuels || []).map(renderFuelRow).join('')}
+        </div>
+        <div class="sub-row" style="margin-top:4px">
+          <span class="sub-label">總油量</span>
+          <span class="sub-value ${fuelCls}">${snapshot.fuelStatus.totalTonnes ?? snapshot.fuelStatus.tonnes} / ${snapshot.fuelStatus.totalCapacity ?? snapshot.fuelStatus.capacity} T &nbsp;(${overallPct}%)</span>
         </div>
         <div class="sub-row">
-          <span class="sub-label">狀態</span>
+          <span class="sub-label">整體狀態</span>
           <span class="sub-value ${fuelCls}">${snapshot.fuelStatus.status}</span>
         </div>
         <div class="sub-row">
-          <span class="sub-label">燃油類型</span>
+          <span class="sub-label">當前模式</span>
           <span class="sub-value">${snapshot.fuelStatus.type}</span>
         </div>
       </div>

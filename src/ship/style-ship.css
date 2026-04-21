@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg-primary:   #0d1117;
   --bg-secondary: #161b22;
   --bg-tertiary:  #21262d;
@@ -54,15 +54,24 @@ html, body {
   border-right: 1px solid var(--border-color);
   max-height: 300px;
   overflow-y: auto;
+  background: var(--bg-primary);
 }
 
 #crew-panel-pane {
   max-height: 300px;
   overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+#risk-panel-pane {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
 }
 
 #timeline-bar {
-  height: 72px;
+  height: 88px;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -442,11 +451,7 @@ html, body {
 .tl-btn:hover,
 .tl-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-.tl-slider {
-  flex: 1;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
+
 
 .tl-time {
   font-size: 12px;
@@ -454,6 +459,166 @@ html, body {
   min-width: 160px;
   text-align: right;
   white-space: nowrap;
+}
+
+/* ── Timeline track (event dots + window + ticks) ─── */
+
+.tl-now-btn {
+  background: rgba(88,166,255,.12);
+  border-color: rgba(88,166,255,.4);
+  color: var(--accent);
+  font-size: 12px;
+}
+.tl-now-btn:hover { background: var(--accent); color: #fff; }
+
+.tl-track-wrap {
+  flex: 1;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 0 14px;
+}
+
+
+
+.tl-events-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+}
+
+.tl-ev-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  top: 2px;
+  transition: transform .15s;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.tl-win-overlay {
+  position: absolute;
+  top: 14px;
+  height: 20px;
+  background: rgba(88,166,255,.07);
+  border: 1px solid rgba(88,166,255,.2);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tl-ticks {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+}
+
+.tl-tick {
+  position: absolute;
+  font-size: 11px;
+  color: var(--text-muted);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.tl-tick.cur {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.event-clickable {
+  cursor: pointer;
+}
+
+/* ── Timeline track (event dots + window + ticks) ─── */
+
+.tl-now-btn {
+  background: rgba(88,166,255,.12);
+  border-color: rgba(88,166,255,.4);
+  color: var(--accent);
+  font-size: 12px;
+}
+.tl-now-btn:hover { background: var(--accent); color: #fff; }
+
+.tl-track-wrap {
+  flex: 1;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 0 14px;
+}
+
+
+
+.tl-events-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+}
+
+.tl-ev-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  top: 2px;
+  transition: transform .15s;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.tl-win-overlay {
+  position: absolute;
+  top: 14px;
+  height: 20px;
+  background: rgba(88,166,255,.07);
+  border: 1px solid rgba(88,166,255,.2);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tl-ticks {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+}
+
+.tl-tick {
+  position: absolute;
+  font-size: 11px;
+  color: var(--text-muted);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.tl-tick.cur {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.event-clickable {
+  cursor: pointer;
 }
 
 /* ── Leaflet overrides ───────────────────────────────── */
@@ -479,6 +644,20 @@ html, body {
 
 .leaflet-control-zoom a:hover { background: var(--bg-tertiary) !important; }
 .leaflet-bar { border-color: var(--border-color) !important; }
+
+/* ── Responsive (RWD) ────────────────────────────────── */
+
+@media (max-width: 767.98px) {
+  #main-area .row.h-100 { flex-direction: column; }
+  aside#ship-list-pane  { height: auto !important; max-height: 180px; }
+  #main-content         { height: auto !important; }
+  #map-panel-pane       { height: 220px; }
+  #event-list-pane, #crew-panel-pane, #risk-panel-pane { max-height: 220px; }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #map-panel-pane { height: 260px; }
+}
 
 /* ── Scrollbar ───────────────────────────────────────── */
 

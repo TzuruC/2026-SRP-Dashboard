@@ -1,4 +1,4 @@
-function lerp(a, b, t) { return a + (b - a) * t; }
+﻿function lerp(a, b, t) { return a + (b - a) * t; }
 
 const BASE_MS = new Date('2026-04-20T00:00:00+08:00').getTime();
 function addHoursIso(h) { return new Date(BASE_MS + h * 3_600_000).toISOString(); }
@@ -28,9 +28,11 @@ const SHIPS = [
     startPos: { lat: 22.57, lng: 120.30 },
     endPos:   { lat: 31.23, lng: 121.50 },
     expectedEtaH: 34,
-    fuelCapacity: 1200,
-    initialFuel: 920,
-    fuelBurnRate: 18,
+    fuels: [
+      { type: 'HFO',   name: '重油',       capacity:  800, initial: 620, burnRate: 14 },
+      { type: 'MGO',   name: '輕油',       capacity:  180, initial: 150, burnRate:  2 },
+      { type: 'VLSFO', name: '低硫燃料油', capacity:  220, initial: 150, burnRate:  2 },
+    ],
     events: [
       { hour: 3,  type: 'speedAnomaly', severity: 'medium', label: '速度異常', description: '航速降至 12 節，偏離預定速度 6 節' },
       { hour: 7,  type: 'eca',          severity: 'low',    label: 'ECA 警示', description: '預計於 3 小時後進入東海 ECA 管制區' },
@@ -61,9 +63,11 @@ const SHIPS = [
     startPos: { lat: 24.29, lng: 120.53 },
     endPos:   { lat: 35.10, lng: 129.04 },
     expectedEtaH: 44,
-    fuelCapacity: 1600,
-    initialFuel: 1100,
-    fuelBurnRate: 22,
+    fuels: [
+      { type: 'HFO',   name: '重油',       capacity: 1100, initial: 760, burnRate: 17 },
+      { type: 'MGO',   name: '輕油',       capacity:  250, initial: 180, burnRate:  3 },
+      { type: 'VLSFO', name: '低硫燃料油', capacity:  250, initial: 160, burnRate:  2 },
+    ],
     events: [
       { hour: 5,  type: 'info',    severity: 'low',    label: '航路更新', description: '通過台灣海峽北口，轉向東北方' },
       { hour: 12, type: 'weather', severity: 'medium', label: '天氣提示', description: '局部陣雨，能見度降低至 5 海里' },
@@ -90,9 +94,11 @@ const SHIPS = [
     startPos: { lat: 25.15, lng: 121.74 },
     endPos:   { lat: 23.10, lng: 113.24 },
     expectedEtaH: 44,
-    fuelCapacity: 1000,
-    initialFuel: 780,
-    fuelBurnRate: 15,
+    fuels: [
+      { type: 'HFO',   name: '重油',       capacity:  650, initial: 510, burnRate: 11 },
+      { type: 'MGO',   name: '輕油',       capacity:  150, initial: 120, burnRate:  2 },
+      { type: 'VLSFO', name: '低硫燃料油', capacity:  200, initial: 150, burnRate:  2 },
+    ],
     events: [
       { hour: 4,  type: 'eca',          severity: 'medium', label: 'ECA 進入', description: '進入南海 ECA 管制區，已切換低硫燃油' },
       { hour: 8,  type: 'routeControl', severity: 'medium', label: '航線管制', description: '台灣海峽南口水道管制，服從 VTS 指令' },
@@ -166,6 +172,23 @@ function calcDelayMinutes(shipId, h) {
   }
 }
 
+/* ── Multi-fuel ECA helpers ─────────────────────────── */
+
+function isInECA(shipId, h) {
+  if (shipId === 'SHP001') return h >= 10 && h < 16; // 東海 ECA
+  if (shipId === 'SHP003') return h >= 4;             // 南海 ECA
+  return false;
+}
+
+/** 單小時實際燃耗（ECA 時 HFO→0，VLSFO 承接主燃） */
+function calcHourlyBurn(shipId, h, fuel, hfoBurnRate) {
+  if (isInECA(shipId, h)) {
+    if (fuel.type === 'HFO')   return 0;
+    if (fuel.type === 'VLSFO') return hfoBurnRate + fuel.burnRate;
+  }
+  return fuel.burnRate;
+}
+
 /* ── Snapshot generator ─────────────────────────────── */
 
 function generateSnapshots(ship) {
@@ -176,9 +199,22 @@ function generateSnapshots(ship) {
       Object.entries(raw).map(([k, v]) => [k, { level: riskLevel(v), pct: v }])
     );
 
-    const fuelTonnes = Math.max(0, Math.round(ship.initialFuel - ship.fuelBurnRate * h));
-    const fuelPct    = Math.round(fuelTonnes / ship.fuelCapacity * 1000) / 10;
-    const fuelStatus = fuelPct > 50 ? '正常' : fuelPct > 30 ? '注意' : '警告';
+    // Multi-fuel: accumulate burn per hour for each fuel type
+    const hfoDef = ship.fuels.find(f => f.type === 'HFO');
+    const hfoBase = hfoDef ? hfoDef.burnRate : 0;
+    const fuelItems = ship.fuels.map(f => {
+      let burned = 0;
+      for (let i = 0; i < h; i++) burned += calcHourlyBurn(ship.id, i, f, hfoBase);
+      burned = Math.round(burned);
+      const tonnes = Math.max(0, f.initial - burned);
+      const pct    = Math.round(tonnes / f.capacity * 1000) / 10;
+      return { type: f.type, name: f.name, tonnes, capacity: f.capacity, percentage: pct };
+    });
+    const totalTonnes    = fuelItems.reduce((s, f) => s + f.tonnes, 0);
+    const totalCapacity  = fuelItems.reduce((s, f) => s + f.capacity, 0);
+    const overallPct     = Math.round(totalTonnes / totalCapacity * 1000) / 10;
+    const overallStatus  = overallPct > 50 ? '正常' : overallPct > 30 ? '注意' : '警告';
+    const activeType     = isInECA(ship.id, h) ? 'VLSFO（ECA 模式）' : 'HFO（一般航行）';
 
     const delayMinutes = calcDelayMinutes(ship.id, h);
     const etaH         = ship.expectedEtaH + delayMinutes / 60;
@@ -206,12 +242,18 @@ function generateSnapshots(ship) {
       eta: fmtIso(etaIso),
       expectedEta: fmtIso(addHoursIso(ship.expectedEtaH)),
       fuelStatus: {
-        tonnes:    fuelTonnes,
-        capacity:  ship.fuelCapacity,
-        percentage: fuelPct,
-        type:      '低硫燃油（VLSFO）',
-        status:    fuelStatus,
+        // Legacy fields (backward compat)
+        tonnes:     totalTonnes,
+        capacity:   totalCapacity,
+        percentage: overallPct,
+        type:       activeType,
+        status:     overallStatus,
         lastUpdate: fmtIso(addHoursIso(h)),
+        // Multi-fuel fields
+        fuels:             fuelItems,
+        totalTonnes,
+        totalCapacity,
+        overallPercentage: overallPct,
       },
       portOperation: portOp,
       risk,
