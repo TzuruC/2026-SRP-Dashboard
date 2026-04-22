@@ -23,7 +23,7 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Segoe UI', system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 #app {
@@ -191,7 +191,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
