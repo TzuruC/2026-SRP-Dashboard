@@ -1,11 +1,24 @@
 const CII_COLOR = { A: '#3fb950', B: '#58a6ff', C: '#d29922', D: '#f85149', E: '#f85149' };
 
 const KPI_TYPES = [
-  { key: 'fuel',    label: '燃油效率' },
-  { key: 'delay',   label: '延誤率'   },
-  { key: 'cii',     label: 'CII 評分' },
-  { key: 'anomaly', label: '異常頻率' },
+  { key: 'composite', label: '綜合評分' },
+  { key: 'fuel',      label: '燃油效率' },
+  { key: 'delay',     label: '延誤率'   },
+  { key: 'cii',       label: 'CII 評分' },
+  { key: 'anomaly',   label: '異常頻率' },
 ];
+
+const RISK_LABEL = s =>
+  s >= 75 ? { txt: '高', cls: 'danger'  } :
+  s >= 40 ? { txt: '中', cls: 'warning' } :
+            { txt: '低', cls: 'success' };
+
+function delayText(minutes) {
+  if (minutes === 0) return { txt: '準時',                    cls: 'success' };
+  if (minutes < 0)   return { txt: `提前 ${Math.abs(minutes)}m`, cls: 'success' };
+  const h = Math.floor(minutes / 60), m = minutes % 60;
+  return { txt: h > 0 ? `延誤 ${h}h${m > 0 ? m + 'm' : ''}` : `延誤 ${m}m`, cls: 'warning' };
+}
 
 function getKPIValue(ship, kpi) {
   switch (kpi) {
@@ -102,14 +115,48 @@ function miniEffBar(pct) {
     </div>`;
 }
 
-export function renderFleetStrategyPanel(container, ships, rankingKPI, onRankingKPIChange) {
-  const kpi     = rankingKPI || 'fuel';
-  const ranking = buildRanking(ships, kpi);
+function renderCompositeTable(ships) {
+  const ranked = [...ships].sort((a, b) => b.riskScore - a.riskScore);
+  const rows = ranked.map((sh, i) => {
+    const delay  = delayText(sh.delayMinutes);
+    const risk   = RISK_LABEL(sh.riskScore);
+    const ciiClr = CII_COLOR[sh.cii.rating] || '#8b949e';
+    return `<tr class="strategy-row">
+      <td class="rank-cell">${i + 1}</td>
+      <td>
+        <div class="strategy-ship-name">${sh.name}</div>
+        <div class="strategy-ship-sub">${sh.type} · ${sh.flag}</div>
+      </td>
+      <td><span style="font-weight:700;color:${ciiClr}">${sh.cii.rating}</span>
+          <span class="strategy-score">${sh.cii.score}</span></td>
+      <td>${miniEffBar(sh.fuel.efficiency)}</td>
+      <td><span class="${delay.cls}">${delay.txt}</span></td>
+      <td>
+        <span class="fk-risk-badge ${risk.cls}">${risk.txt}</span>
+        <span class="strategy-score">${sh.riskScore}</span>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<div class="strategy-table-wrap">
+    <table class="strategy-table">
+      <thead><tr><th>#</th><th>船名</th><th>CII</th><th>燃油效率</th><th>延誤狀態</th><th>風險評分</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
 
-  const n           = ships.length;
-  const topCount    = Math.min(3, Math.floor(n / 2));
-  const topItems    = ranking.slice(0, topCount);
-  const bottomItems = ranking.slice(n - topCount);
+export function renderFleetStrategyPanel(container, ships, rankingKPI, onRankingKPIChange) {
+  const kpi        = rankingKPI || 'composite';
+  const isComposite = kpi === 'composite';
+
+  let ranking, n, topCount, topItems, bottomItems;
+  if (!isComposite) {
+    ranking     = buildRanking(ships, kpi);
+    n           = ships.length;
+    topCount    = Math.min(3, Math.floor(n / 2));
+    topItems    = ranking.slice(0, topCount);
+    bottomItems = ranking.slice(n - topCount);
+  }
 
   const avgSpeed  = (ships.reduce((s, sh) => s + sh.speed, 0) / ships.length).toFixed(1);
   const avgFuel   = Math.round(ships.reduce((s, sh) => s + sh.fuel.efficiency, 0) / ships.length);
@@ -158,20 +205,23 @@ export function renderFleetStrategyPanel(container, ships, rankingKPI, onRanking
 
         <div class="ranking-seg">${segButtons}</div>
 
-        <div class="row g-3">
-          <div class="col-12 col-lg-6">
-            <div class="strategy-section" style="border-color:rgba(63,185,80,.3)">
-              <div class="ranking-panel-head best">🏆 最佳 ${topCount} 艘</div>
-              ${topItems.map(item => rankRow(item, kpi, true)).join('')}
-            </div>
-          </div>
-          <div class="col-12 col-lg-6">
-            <div class="strategy-section" style="border-color:rgba(248,81,73,.3)">
-              <div class="ranking-panel-head worst">⚠️ 最差 ${topCount} 艘</div>
-              ${bottomItems.map(item => rankRow(item, kpi, false)).join('')}
-            </div>
-          </div>
-        </div>
+        ${isComposite
+          ? renderCompositeTable(ships)
+          : `<div class="row g-3">
+              <div class="col-12 col-lg-6">
+                <div class="strategy-section" style="border-color:rgba(63,185,80,.3)">
+                  <div class="ranking-panel-head best">🏆 最佳 ${topCount} 艘</div>
+                  ${topItems.map(item => rankRow(item, kpi, true)).join('')}
+                </div>
+              </div>
+              <div class="col-12 col-lg-6">
+                <div class="strategy-section" style="border-color:rgba(248,81,73,.3)">
+                  <div class="ranking-panel-head worst">⚠️ 最差 ${topCount} 艘</div>
+                  ${bottomItems.map(item => rankRow(item, kpi, false)).join('')}
+                </div>
+              </div>
+            </div>`
+        }
       </div>
 
       <!-- Trend Chart Placeholders -->
