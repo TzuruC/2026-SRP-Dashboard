@@ -88,7 +88,16 @@ function _buildDOM(container) {
   _stopPlay();
 
   container.innerHTML = `
-    <span class="tl-label">時間軸</span>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0">
+      <span class="tl-label">時間軸</span>
+      <span id="tl-mode-badge" style="
+        font-size:10px;font-weight:700;letter-spacing:.06em;
+        padding:1px 7px;border-radius:10px;
+        background:rgba(63,185,80,.15);color:#3fb950;
+        border:1px solid rgba(63,185,80,.4);
+        transition:background .25s,color .25s,border-color .25s;
+      ">NOW</span>
+    </div>
 
     <div class="tl-btn-group">
       <button class="tl-btn" id="tl-start" title="跳至開始">&#9664;&#9664;</button>
@@ -99,6 +108,7 @@ function _buildDOM(container) {
     <div class="tl-track-wrap">
       <div class="tl-events-layer" id="tl-events-layer"></div>
       <div class="tl-win-overlay"  id="tl-win-overlay"></div>
+      <div class="tl-anchor-line"  id="tl-anchor-line" style="display:none"></div>
       <input type="range" class="tl-slider" id="tl-slider"
              min="0" max="${TOTAL}" value="0" step="1" />
       <div class="tl-ticks" id="tl-ticks"></div>
@@ -113,13 +123,15 @@ function _buildDOM(container) {
 
   _ctrl = {
     container,
-    slider:   container.querySelector("#tl-slider"),
-    timeDisp: container.querySelector("#tl-time"),
-    evLayer:  container.querySelector("#tl-events-layer"),
-    winOvl:   container.querySelector("#tl-win-overlay"),
-    ticks:    container.querySelector("#tl-ticks"),
-    nowBtn:   container.querySelector("#tl-now"),
-    playBtn:  container.querySelector("#tl-play"),
+    slider:     container.querySelector("#tl-slider"),
+    timeDisp:   container.querySelector("#tl-time"),
+    evLayer:    container.querySelector("#tl-events-layer"),
+    winOvl:     container.querySelector("#tl-win-overlay"),
+    anchorLine: container.querySelector("#tl-anchor-line"),
+    ticks:      container.querySelector("#tl-ticks"),
+    nowBtn:     container.querySelector("#tl-now"),
+    playBtn:    container.querySelector("#tl-play"),
+    modeBadge:  container.querySelector("#tl-mode-badge"),
   };
 
   container.querySelector("#tl-start").addEventListener("click", () => {
@@ -159,26 +171,66 @@ function _buildDOM(container) {
 
 function _update({ currentStep, win, events, mode, focusEventId }) {
   const { start, end } = win;
+  const isEvent = mode === "EVENT";
 
   _ctrl.slider.value = currentStep;
   _ctrl.timeDisp.textContent = stepLabel(currentStep);
 
-  // "回到現在" visible only in EVENT mode
-  _ctrl.nowBtn.style.display = mode === "EVENT" ? "" : "none";
+  // ── Mode badge ─────────────────────────────────────
+  if (isEvent) {
+    Object.assign(_ctrl.modeBadge.style, {
+      background:   "rgba(210,153,34,.15)",
+      color:        "#d29922",
+      borderColor:  "rgba(210,153,34,.45)",
+    });
+    _ctrl.modeBadge.textContent = "EVENT";
+  } else {
+    Object.assign(_ctrl.modeBadge.style, {
+      background:   "rgba(63,185,80,.15)",
+      color:        "#3fb950",
+      borderColor:  "rgba(63,185,80,.4)",
+    });
+    _ctrl.modeBadge.textContent = "NOW";
+  }
 
-  // Window highlight overlay
+  // ── "回到現在" button ──────────────────────────────
+  _ctrl.nowBtn.style.display = isEvent ? "" : "none";
+
+  // ── Window highlight overlay ───────────────────────
   const winL = (start / TOTAL) * 100;
   const winW = ((end - start) / TOTAL) * 100;
   _ctrl.winOvl.style.left  = `${winL}%`;
   _ctrl.winOvl.style.width = `${winW}%`;
+  if (isEvent) {
+    // EVENT: amber tint — "locked" window
+    _ctrl.winOvl.style.background   = "rgba(210,153,34,.10)";
+    _ctrl.winOvl.style.borderColor  = "rgba(210,153,34,.35)";
+  } else {
+    // NOW: blue tint — "live" window
+    _ctrl.winOvl.style.background   = "rgba(88,166,255,.07)";
+    _ctrl.winOvl.style.borderColor  = "rgba(88,166,255,.2)";
+  }
 
-  // Event dots — only those within the window
+  // ── Anchor line (EVENT mode only, marks the focus step) ──
+  if (isEvent && focusEventId) {
+    const focusHour = parseInt(focusEventId.split("_").pop(), 10);
+    const anchorPct = (focusHour / TOTAL) * 100;
+    Object.assign(_ctrl.anchorLine.style, {
+      display:     "block",
+      left:        `${anchorPct}%`,
+      borderColor: "rgba(210,153,34,.7)",
+    });
+  } else {
+    _ctrl.anchorLine.style.display = "none";
+  }
+
+  // ── Event dots — within window only ───────────────
   const inWindow = events.filter((ev) => ev.hour >= start && ev.hour <= end);
   _ctrl.evLayer.innerHTML = inWindow
     .map((ev) => {
-      const pct   = (ev.hour / TOTAL) * 100;
-      const color = eventDotColor(ev);
-      const evId  = `${ev.type}_${ev.hour}`;
+      const pct       = (ev.hour / TOTAL) * 100;
+      const color     = eventDotColor(ev);
+      const evId      = `${ev.type}_${ev.hour}`;
       const isFocused = focusEventId && evId === focusEventId;
       const focusStyle = isFocused
         ? `box-shadow:0 0 10px ${color};transform:scale(1.9);`
@@ -189,13 +241,10 @@ function _update({ currentStep, win, events, mode, focusEventId }) {
     })
     .join("");
 
-  // Window-range ticks: every 2 h within [win.start, win.end]
-  // Align start to nearest even number at or after win.start
-  const tickStep = 2;
-  const tickStart = Math.ceil(start / tickStep) * tickStep;
+  // ── Window-range ticks: every 2 h within [start, end] ─
+  const tickStart = Math.ceil(start / 2) * 2;
   const windowTicks = [];
-  for (let h = tickStart; h <= end; h += tickStep) windowTicks.push(h);
-  // Always include currentStep label so user sees exact position
+  for (let h = tickStart; h <= end; h += 2) windowTicks.push(h);
   if (!windowTicks.includes(currentStep)) windowTicks.push(currentStep);
   windowTicks.sort((a, b) => a - b);
 
