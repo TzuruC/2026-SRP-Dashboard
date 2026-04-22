@@ -1,4 +1,4 @@
-﻿import { defineConfig } from "vite"
+import { defineConfig } from "vite"
 import { resolve, extname, dirname, basename } from "path"
 import { readdirSync, statSync } from "fs"
 import { fileURLToPath } from "url"
