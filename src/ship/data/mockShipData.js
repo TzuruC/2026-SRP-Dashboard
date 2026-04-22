@@ -41,6 +41,14 @@ const SHIPS = [
       { hour: 18, type: 'info',         severity: 'low',    label: '狀態更新', description: '天候改善，航速恢復正常至 18 節' },
       { hour: 22, type: 'info',         severity: 'low',    label: '靠泊通報', description: '已通報上海港引水站，預計靠泊 D7 碼頭' },
     ],
+    portEvents: [
+      { hour: 36, type: 'berthing',    label: '靠泊',       severity: 'low',    description: '靠泊上海港 D7 碼頭，引水員登船引導' },
+      { hour: 38, type: 'cargoOps',    label: '卸貨作業',   severity: 'low',    description: '開始卸載貨櫃，預計 18 小時完成' },
+      { hour: 44, type: 'crewChange',  label: '船員交接',   severity: 'medium', description: '陳大衛（船長）、李明恩（大副）服務期滿，安排交接' },
+      { hour: 52, type: 'bunkering',   label: 'HFO 補給',   severity: 'medium', description: 'HFO 補給 350T，預計 6 小時，接管確認中' },
+      { hour: 62, type: 'inspection',  label: 'PSC 檢查',   severity: 'high',   description: '中國海事局港口國管制例行檢查' },
+      { hour: 80, type: 'certRenewal', label: '證書更新',   severity: 'medium', description: 'SOLAS 安全證書（到期 05-15）送審更新' },
+    ],
     crew: [
       { name: '陳大衛', rank: '船長',   serviceDays: 165, maxDays: 180 },
       { name: '李明恩', rank: '大副',   serviceDays: 158, maxDays: 180 },
@@ -72,6 +80,13 @@ const SHIPS = [
       { hour: 5,  type: 'info',    severity: 'low',    label: '航路更新', description: '通過台灣海峽北口，轉向東北方' },
       { hour: 12, type: 'weather', severity: 'medium', label: '天氣提示', description: '局部陣雨，能見度降低至 5 海里' },
       { hour: 19, type: 'info',    severity: 'low',    label: 'VTS 報告', description: '已進入韓國 VTS 報告區，等待進港許可' },
+    ],
+    portEvents: [
+      { hour: 46, type: 'berthing',    label: '靠泊',       severity: 'low',    description: '靠泊釜山港 HBCT 碼頭' },
+      { hour: 48, type: 'cargoOps',    label: '散貨卸載',   severity: 'low',    description: '鐵礦砂卸貨作業，抓斗式卸貨，預計 24 小時' },
+      { hour: 60, type: 'bunkering',   label: 'MGO 補給',   severity: 'low',    description: 'MGO 補給 120T，燃油驗收進行中' },
+      { hour: 72, type: 'inspection',  label: '船級檢驗',   severity: 'medium', description: '韓國船級社（KR）定期檢驗' },
+      { hour: 96, type: 'crewChange',  label: '船員輪換',   severity: 'low',    description: '一般輪換作業，3 名船員替換' },
     ],
     crew: [
       { name: '張建國', rank: '船長', serviceDays: 95,  maxDays: 180 },
@@ -105,6 +120,14 @@ const SHIPS = [
       { hour: 13, type: 'delay',        severity: 'high',   label: '延誤通報', description: '廣州港進港預約壅塞，預計延誤 8 小時' },
       { hour: 17, type: 'weather',      severity: 'medium', label: '天氣警報', description: '南海東北季風增強，蒲福風級 5 級' },
       { hour: 21, type: 'info',         severity: 'low',    label: '代理通知', description: '已確認廣州港代理，修正靠泊時間' },
+    ],
+    portEvents: [
+      { hour: 52, type: 'berthing',    label: '延誤靠泊',   severity: 'high',   description: '港口壅塞，延誤靠泊廣州港 6 號浮筒' },
+      { hour: 54, type: 'cargoOps',    label: '油品卸載',   severity: 'medium', description: '原油卸載，管線接泊，注意靜電管控' },
+      { hour: 62, type: 'inspection',  label: 'PSC 緊急',   severity: 'high',   description: 'MARPOL Annex II 證書過期，啟動緊急 PSC 檢查' },
+      { hour: 68, type: 'certRenewal', label: '緊急換證',   severity: 'high',   description: 'MARPOL Annex II 緊急換證，需取得分類許可' },
+      { hour: 80, type: 'crewChange',  label: '船員交接',   severity: 'medium', description: '劉威廷（船長）172 天服務期，優先安排交接' },
+      { hour: 92, type: 'bunkering',   label: 'VLSFO 補給', severity: 'medium', description: 'VLSFO 補給 150T，下段 ECA 航程備用' },
     ],
     crew: [
       { name: '劉威廷', rank: '船長',   serviceDays: 172, maxDays: 180 },

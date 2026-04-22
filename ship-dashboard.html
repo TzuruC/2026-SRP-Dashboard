@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-TW">
 
 <head>
@@ -22,24 +22,38 @@
           <!-- 主要內容區 -->
           <div class="col-12 col-md-10 h-100" id="main-content">
 
-            <!-- 頂部：船隻總覽 -->
+            <!-- 船隻總覽 -->
             <div id="ship-overview-pane"></div>
 
-            <!-- 中部：地圖 + 時間軸 | 事件清單 -->
-            <div class="row g-0" id="mid-row">
+            <!-- ══ VOYAGE 航程 ══════════════════════════════ -->
+            <div class="section-divider section-divider--voyage">
+              <span>⚓ VOYAGE 航程</span>
+              <span class="section-divider-sub">出發 → ETA（0 – 24h）</span>
+            </div>
+
+            <div class="row g-0">
               <div class="col-12 col-lg-8">
                 <div id="map-panel-pane"></div>
-                <div id="timeline-bar"></div>
+                <div id="voyage-timeline-bar"></div>
               </div>
               <div class="col-12 col-lg-4">
-                <div id="event-list-pane"></div>
+                <div id="voyage-event-pane"></div>
               </div>
             </div>
 
-            <!-- 底部：船員資訊 | 風險評估 -->
-            <div class="row g-0" id="bottom-row">
-              <div class="col-12 col-md-5" id="crew-panel-pane"></div>
-              <div class="col-12 col-md-7" id="risk-panel-pane"></div>
+            <!-- ══ PORT 港口作業 ════════════════════════════ -->
+            <div class="section-divider section-divider--port">
+              <span>🏭 PORT 港口作業</span>
+              <span class="section-divider-sub">ETA → ETA + 72h</span>
+            </div>
+
+            <div class="row g-0" id="port-row">
+              <div class="col-12 col-md-5">
+                <div id="port-timeline-bar"></div>
+                <div id="port-event-pane"></div>
+              </div>
+              <div class="col-12 col-md-4" id="crew-panel-pane"></div>
+              <div class="col-12 col-md-3" id="risk-panel-pane"></div>
             </div>
 
           </div>
