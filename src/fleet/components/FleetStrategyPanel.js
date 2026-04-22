@@ -1,11 +1,94 @@
-const CII_COLOR  = { A: '#3fb950', B: '#58a6ff', C: '#d29922', D: '#f85149', E: '#f85149' };
-const RISK_LABEL = (s) => s >= 75 ? { txt: '高', cls: 'danger' } : s >= 40 ? { txt: '中', cls: 'warning' } : { txt: '低', cls: 'success' };
+const CII_COLOR = { A: '#3fb950', B: '#58a6ff', C: '#d29922', D: '#f85149', E: '#f85149' };
 
-function delayText(minutes) {
-  if (minutes === 0)   return { txt: '準時',         cls: 'success' };
-  if (minutes < 0)     return { txt: `提前 ${Math.abs(minutes)} 分`, cls: 'success' };
-  const h = Math.floor(minutes / 60), m = minutes % 60;
-  return { txt: h > 0 ? `延誤 ${h}h${m > 0 ? m + 'm' : ''}` : `延誤 ${m}m`, cls: 'warning' };
+const KPI_TYPES = [
+  { key: 'fuel',    label: '燃油效率' },
+  { key: 'delay',   label: '延誤率'   },
+  { key: 'cii',     label: 'CII 評分' },
+  { key: 'anomaly', label: '異常頻率' },
+];
+
+function getKPIValue(ship, kpi) {
+  switch (kpi) {
+    case 'fuel':    return ship.fuel.efficiency;
+    case 'delay':   return ship.delayMinutes;
+    case 'cii':     return ship.cii.score;
+    case 'anomaly':
+      return (ship.anomalies.speedAnomaly ? 1 : 0) +
+             (ship.anomalies.routeDeviation ? 1 : 0) +
+             (ship.anomalies.delay ? 1 : 0);
+  }
+}
+
+function getPrevKPIValue(ship, kpi) {
+  const p = ship.prevPeriod;
+  switch (kpi) {
+    case 'fuel':    return p.fuelEfficiency;
+    case 'delay':   return p.delayMinutes;
+    case 'cii':     return p.ciiScore;
+    case 'anomaly': return p.anomalyCount;
+  }
+}
+
+function isHigherBetter(kpi) {
+  return kpi === 'fuel' || kpi === 'cii';
+}
+
+function formatKPIValue(kpi, value) {
+  switch (kpi) {
+    case 'fuel':    return `${value}%`;
+    case 'cii':     return String(value);
+    case 'anomaly': return `${value} 次`;
+    case 'delay': {
+      if (value < 0)   return `提前 ${Math.abs(value)}m`;
+      if (value === 0) return '準時';
+      const h = Math.floor(value / 60), m = value % 60;
+      return h > 0 ? `${h}h${m > 0 ? m + 'm' : ''}` : `${value}m`;
+    }
+  }
+}
+
+function buildRanking(ships, kpi) {
+  const higher = isHigherBetter(kpi);
+  const cmp = (a, b, getter) => higher ? getter(b) - getter(a) : getter(a) - getter(b);
+
+  const sorted     = [...ships].sort((a, b) => cmp(a, b, sh => getKPIValue(sh, kpi)));
+  const sortedPrev = [...ships].sort((a, b) => cmp(a, b, sh => getPrevKPIValue(sh, kpi)));
+
+  const prevRankMap = {};
+  sortedPrev.forEach((sh, i) => { prevRankMap[sh.id] = i + 1; });
+
+  return sorted.map((sh, i) => ({
+    ship: sh,
+    rank: i + 1,
+    change: prevRankMap[sh.id] - (i + 1),
+    value: getKPIValue(sh, kpi),
+  }));
+}
+
+function rankChangeBadge(change) {
+  if (change > 0) return `<span class="rank-up">↑${change}</span>`;
+  if (change < 0) return `<span class="rank-down">↓${Math.abs(change)}</span>`;
+  return `<span class="rank-same">—</span>`;
+}
+
+function rankNumClass(rank) {
+  if (rank === 1) return ' gold';
+  if (rank === 2) return ' silver';
+  if (rank === 3) return ' bronze';
+  return '';
+}
+
+function rankRow(item, kpi, isBest) {
+  return `
+    <div class="ranking-row">
+      <span class="rank-num${rankNumClass(item.rank)}">${item.rank}</span>
+      ${rankChangeBadge(item.change)}
+      <div class="rank-ship">
+        <div class="rank-ship-name">${item.ship.name}</div>
+        <div class="rank-ship-sub">${item.ship.type}</div>
+      </div>
+      <span class="rank-value ${isBest ? 'best' : 'worst'}">${formatKPIValue(kpi, item.value)}</span>
+    </div>`;
 }
 
 function miniEffBar(pct) {
@@ -15,41 +98,29 @@ function miniEffBar(pct) {
       <div style="width:60px;height:5px;background:var(--fc-border);border-radius:3px;overflow:hidden">
         <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
       </div>
-      <span style="font-size:11px;color:var(--fc-muted)">${pct}%</span>
+      <span>${pct}%</span>
     </div>`;
 }
 
-export function renderFleetStrategyPanel(container, ships) {
-  // Sort by riskScore descending (worst first — operators focus on problems)
-  const ranked = [...ships].sort((a, b) => b.riskScore - a.riskScore);
+export function renderFleetStrategyPanel(container, ships, rankingKPI, onRankingKPIChange) {
+  const kpi     = rankingKPI || 'fuel';
+  const ranking = buildRanking(ships, kpi);
 
-  const avgSpeed = (ships.reduce((s, sh) => s + sh.speed, 0) / ships.length).toFixed(1);
-  const avgFuel  = Math.round(ships.reduce((s, sh) => s + sh.fuel.efficiency, 0) / ships.length);
-  const avgCII   = Math.round(ships.reduce((s, sh) => s + sh.cii.score, 0) / ships.length);
-  const delayed  = ships.filter(s => s.delayMinutes > 0).length;
+  const n           = ships.length;
+  const topCount    = Math.min(3, Math.floor(n / 2));
+  const topItems    = ranking.slice(0, topCount);
+  const bottomItems = ranking.slice(n - topCount);
+
+  const avgSpeed  = (ships.reduce((s, sh) => s + sh.speed, 0) / ships.length).toFixed(1);
+  const avgFuel   = Math.round(ships.reduce((s, sh) => s + sh.fuel.efficiency, 0) / ships.length);
+  const avgCII    = Math.round(ships.reduce((s, sh) => s + sh.cii.score, 0) / ships.length);
+  const delayed   = ships.filter(s => s.delayMinutes > 0).length;
   const anomalous = ships.filter(s => s.status === 'anomaly').length;
 
-  const rows = ranked.map((sh, i) => {
-    const delay  = delayText(sh.delayMinutes);
-    const risk   = RISK_LABEL(sh.riskScore);
-    const ciiClr = CII_COLOR[sh.cii.rating] || '#8b949e';
-    return `
-      <tr class="strategy-row">
-        <td class="rank-cell">${i + 1}</td>
-        <td>
-          <div class="strategy-ship-name">${sh.name}</div>
-          <div class="strategy-ship-sub">${sh.type} · ${sh.flag}</div>
-        </td>
-        <td><span style="font-weight:700;color:${ciiClr}">${sh.cii.rating}</span>
-            <span class="strategy-score">${sh.cii.score}</span></td>
-        <td>${miniEffBar(sh.fuel.efficiency)}</td>
-        <td><span class="${delay.cls}" style="font-size:12px">${delay.txt}</span></td>
-        <td>
-          <span class="fk-risk-badge ${risk.cls}">${risk.txt}</span>
-          <span class="strategy-score">${sh.riskScore}</span>
-        </td>
-      </tr>`;
-  }).join('');
+  const segButtons = KPI_TYPES.map(t => `
+    <button class="ranking-seg-btn${t.key === kpi ? ' active' : ''}" data-kpi="${t.key}">
+      ${t.label}
+    </button>`).join('');
 
   container.innerHTML = `
     <div class="strategy-wrap">
@@ -78,23 +149,28 @@ export function renderFleetStrategyPanel(container, ships) {
         </div>
       </div>
 
-      <!-- Fleet Ranking Table -->
+      <!-- Fleet Ranking Panel（來自 1a97a64）-->
       <div class="strategy-section">
-        <div class="strategy-section-title">船隊排名（依風險評分，高至低）</div>
-        <div class="strategy-table-wrap">
-          <table class="strategy-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>船名</th>
-                <th>CII</th>
-                <th>燃油效率</th>
-                <th>延誤狀態</th>
-                <th>風險評分</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="strategy-section-title mb-0">船隊排名</div>
+          <span class="rank-period-hint">↑↓ 較上週</span>
+        </div>
+
+        <div class="ranking-seg">${segButtons}</div>
+
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div class="strategy-section" style="border-color:rgba(63,185,80,.3)">
+              <div class="ranking-panel-head best">🏆 最佳 ${topCount} 艘</div>
+              ${topItems.map(item => rankRow(item, kpi, true)).join('')}
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="strategy-section" style="border-color:rgba(248,81,73,.3)">
+              <div class="ranking-panel-head worst">⚠️ 最差 ${topCount} 艘</div>
+              ${bottomItems.map(item => rankRow(item, kpi, false)).join('')}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -135,4 +211,10 @@ export function renderFleetStrategyPanel(container, ships) {
 
     </div>
   `;
+
+  container.querySelectorAll('.ranking-seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (onRankingKPIChange) onRankingKPIChange(btn.dataset.kpi);
+    });
+  });
 }

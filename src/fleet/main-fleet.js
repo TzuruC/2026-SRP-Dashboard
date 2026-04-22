@@ -7,6 +7,7 @@ import { renderFleetRiskPanel } from './components/FleetRiskPanel.js';
 const state = {
   ships: mockFleetData.ships,
   events: mockFleetData.events,
+  rankingKPI: 'fuel',
 };
 
 function getContainer(id) {
@@ -18,9 +19,24 @@ function renderKPI() {
 }
 
 function renderAll() {
-  renderFleetStrategyPanel(getContainer('fleet-strategy-panel'), state.ships);
+  renderFleetStrategyPanel(
+    getContainer('fleet-strategy-panel'),
+    state.ships,
+    state.rankingKPI,
+    onRankingKPIChange
+  );
   renderFleetLivePanel(getContainer('fleet-live-panel'), state.ships, onDrillDown);
   renderFleetRiskPanel(getContainer('fleet-risk-panel'), state.ships, state.events);
+}
+
+function onRankingKPIChange(kpi) {
+  state.rankingKPI = kpi;
+  renderFleetStrategyPanel(
+    getContainer('fleet-strategy-panel'),
+    state.ships,
+    state.rankingKPI,
+    onRankingKPIChange
+  );
 }
 
 function onDrillDown(shipId) {

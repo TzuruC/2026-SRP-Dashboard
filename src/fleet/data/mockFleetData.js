@@ -22,6 +22,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: false, routeDeviation: false, delay: true },
       weeklyEfficiency: [65, 67, 66, 68, 70, 68, 68],
       riskScore: 62,
+      prevPeriod: { fuelEfficiency: 54, delayMinutes: 60, ciiScore: 52, anomalyCount: 2 },
     },
     {
       id: 'SHP002', name: 'Pacific Pioneer',
@@ -39,6 +40,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: true, routeDeviation: false, delay: false },
       weeklyEfficiency: [58, 55, 52, 50, 48, 51, 51],
       riskScore: 85,
+      prevPeriod: { fuelEfficiency: 55, delayMinutes: 0, ciiScore: 45, anomalyCount: 0 },
     },
     {
       id: 'SHP003', name: 'Orient Star',
@@ -56,6 +58,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: false, routeDeviation: false, delay: false },
       weeklyEfficiency: [82, 83, 85, 84, 85, 86, 85],
       riskScore: 18,
+      prevPeriod: { fuelEfficiency: 82, delayMinutes: 30, ciiScore: 65, anomalyCount: 0 },
     },
     {
       id: 'SHP004', name: 'Meridian Bay',
@@ -73,6 +76,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: false, routeDeviation: true, delay: true },
       weeklyEfficiency: [48, 45, 42, 40, 42, 45, 45],
       riskScore: 91,
+      prevPeriod: { fuelEfficiency: 50, delayMinutes: 180, ciiScore: 36, anomalyCount: 1 },
     },
     {
       id: 'SHP005', name: 'Coral Express',
@@ -90,6 +94,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: false, routeDeviation: false, delay: false },
       weeklyEfficiency: [88, 90, 91, 92, 93, 92, 93],
       riskScore: 9,
+      prevPeriod: { fuelEfficiency: 90, delayMinutes: -60, ciiScore: 80, anomalyCount: 0 },
     },
     {
       id: 'SHP006', name: 'Northern Cross',
@@ -107,6 +112,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: true, routeDeviation: false, delay: false },
       weeklyEfficiency: [64, 63, 61, 60, 61, 61, 61],
       riskScore: 72,
+      prevPeriod: { fuelEfficiency: 64, delayMinutes: 30, ciiScore: 58, anomalyCount: 2 },
     },
     {
       id: 'SHP007', name: 'Azure Horizon',
@@ -124,6 +130,7 @@ export const mockFleetData = {
       anomalies: { speedAnomaly: false, routeDeviation: false, delay: false },
       weeklyEfficiency: [75, 76, 78, 77, 78, 79, 78],
       riskScore: 14,
+      prevPeriod: { fuelEfficiency: 75, delayMinutes: 0, ciiScore: 70, anomalyCount: 1 },
     },
   ],
 
