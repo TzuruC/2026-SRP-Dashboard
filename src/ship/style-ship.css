@@ -26,7 +26,7 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Segoe UI', system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 /* ── Layout ─────────────────────────────────────────── */
@@ -95,7 +95,7 @@ body {
   background: var(--bg-tertiary);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -107,7 +107,7 @@ body {
 }
 
 .section-divider-sub {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
@@ -121,7 +121,7 @@ body {
   padding: 8px 12px;
   background: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-color);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -135,7 +135,7 @@ body {
 }
 
 .panel-header .update-time {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
@@ -174,7 +174,7 @@ body {
 }
 
 .s-ship-meta {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
@@ -217,7 +217,7 @@ body {
 }
 
 .overview-tag {
-  font-size: 12px;
+  font-size: 14px;
   padding: 2px 8px;
   border-radius: 3px;
   background: var(--bg-tertiary);
@@ -241,7 +241,7 @@ body {
 }
 
 .overview-field-label {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   margin-bottom: 1px;
 }
@@ -292,7 +292,7 @@ body {
 }
 
 .sub-label {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
@@ -351,7 +351,7 @@ body {
 }
 
 .risk-badge {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   padding: 1px 8px;
   border-radius: 3px;
@@ -408,7 +408,7 @@ body {
 }
 
 .risk-pct {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   min-width: 34px;
   text-align: right;
@@ -430,7 +430,7 @@ body {
 }
 
 .event-type-badge {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 3px;
@@ -463,7 +463,7 @@ body {
 }
 
 .event-time {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -472,7 +472,7 @@ body {
   padding: 24px 12px;
   text-align: center;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ── Crew panel ──────────────────────────────────────── */
@@ -491,7 +491,7 @@ body {
 }
 
 .crew-rank {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
@@ -525,7 +525,7 @@ body {
 }
 
 .service-days {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   text-align: right;
 }
@@ -545,7 +545,7 @@ body {
 }
 
 .cert-badge {
-  font-size: 12px;
+  font-size: 14px;
   padding: 1px 7px;
   border-radius: 3px;
   flex-shrink: 0;
@@ -585,7 +585,7 @@ body {
   gap: 8px;
   padding: 8px 12px;
   color: var(--success);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .crew-anomaly-icon {
@@ -617,7 +617,7 @@ body {
 }
 
 .crew-anomaly-badge {
-  font-size: 12px;
+  font-size: 14px;
   padding: 1px 6px;
   border-radius: 3px;
   flex-shrink: 0;
@@ -636,18 +636,18 @@ body {
 }
 
 .crew-anomaly-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .crew-anomaly-rank {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
 .crew-anomaly-detail {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   padding-left: 2px;
 }
@@ -668,7 +668,7 @@ body {
 }
 
 .tl-label {
-  font-size: 12px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: .07em;
   color: var(--text-muted);
@@ -692,7 +692,7 @@ body {
   border: 1px solid var(--border-color);
   background: var(--bg-secondary);
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -724,7 +724,7 @@ body {
   width: auto;
   border-radius: 20px;
   padding: 0 14px;
-  font-size: 12px;
+  font-size: 14px;
   height: 34px;
   background: rgba(88, 166, 255, .12);
   border-color: rgba(88, 166, 255, .4);
@@ -740,7 +740,7 @@ body {
 
 /* 時間戳記文字 */
 .tl-time {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   white-space: nowrap;
   min-width: 155px;
@@ -887,7 +887,7 @@ body {
 
 .tl-tick {
   position: absolute;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   transform: translateX(-50%);
   white-space: nowrap;
@@ -953,7 +953,7 @@ body {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
-  font-size: 12px !important;
+  font-size: 14px !important;
   border-radius: 4px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, .5) !important;
 }
