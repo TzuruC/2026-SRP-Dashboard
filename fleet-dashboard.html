@@ -9,45 +9,49 @@
 </head>
 <body>
 
-  <!-- KPI Fixed Header -->
+  <!-- KPI Sticky Header -->
   <header id="fleet-kpi-header" class="fleet-kpi-header"></header>
 
-  <!-- Main Content -->
   <main class="fleet-main">
 
-    <!-- Tab Navigation -->
-    <nav class="fleet-tab-nav">
-      <ul class="nav nav-tabs fleet-tabs" id="fleet-tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="tab-strategy-btn"
-            data-bs-toggle="tab" data-bs-target="#tab-strategy"
-            type="button" role="tab">
-            &#128202; 策略分析
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-live-btn"
-            data-bs-toggle="tab" data-bs-target="#tab-live"
-            type="button" role="tab">
-            &#128752; 即時動態
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-risk-btn"
-            data-bs-toggle="tab" data-bs-target="#tab-risk"
-            type="button" role="tab">
-            &#9888;&#65039; 風險面板
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <!-- ① 策略分析層 -->
+    <section class="fleet-layer fleet-layer--strategy">
+      <div class="fleet-layer-head">
+        <div class="fleet-layer-head-left">
+          <span class="fleet-layer-badge fleet-layer-badge--strategy">&#128202; 策略分析層</span>
+          <span class="fleet-layer-sub">決策依據 &middot; 趨勢洞察 &middot; 效率排名</span>
+        </div>
+      </div>
+      <div id="fleet-strategy-panel"></div>
+    </section>
 
-    <!-- Tab Panes -->
-    <div class="tab-content fleet-tab-content" id="fleet-tab-content">
-      <div class="tab-pane fade show active" id="tab-strategy" role="tabpanel"></div>
-      <div class="tab-pane fade" id="tab-live" role="tabpanel"></div>
-      <div class="tab-pane fade" id="tab-risk" role="tabpanel"></div>
-    </div>
+    <!-- 分層視覺分隔線 -->
+    <div class="fleet-layer-divider" aria-hidden="true"></div>
+
+    <!-- ② 現況監控層 -->
+    <section class="fleet-layer fleet-layer--live">
+      <div class="fleet-layer-head">
+        <div class="fleet-layer-head-left">
+          <span class="fleet-layer-badge fleet-layer-badge--live">&#128752; 現況監控層</span>
+          <span class="fleet-layer-sub">即時動態 &middot; 風險警示</span>
+        </div>
+        <button class="fleet-risk-toggle"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#fleet-risk-panel-wrap"
+                aria-expanded="true">
+          &#9888;&#65039; 風險面板
+        </button>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-lg-8" id="fleet-live-panel"></div>
+        <div class="col-12 col-lg-4">
+          <div class="collapse show" id="fleet-risk-panel-wrap">
+            <div id="fleet-risk-panel"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
   </main>
 

@@ -133,54 +133,92 @@ body {
   min-height: calc(100vh - 56px);
 }
 
-/* ── Tab Navigation ─────────────────────────────────────── */
+/* ── Layer Layout ───────────────────────────────────────── */
 
-.fleet-tab-nav {
-  background: var(--fc-surface);
-  border-bottom: 1px solid var(--fc-border);
-  padding: 0 20px;
-}
-
-.fleet-tabs {
-  border-bottom: none;
-  gap: 4px;
-}
-
-.fleet-tabs .nav-link {
-  color: var(--fc-muted);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  padding: 10px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  transition: color .15s, border-color .15s;
-}
-
-.fleet-tabs .nav-link:hover {
-  color: var(--fc-text);
-}
-
-.fleet-tabs .nav-link.active {
-  color: var(--fc-accent);
-  border-bottom-color: var(--fc-accent);
-  background: transparent;
-}
-
-/* ── Tab Content ────────────────────────────────────────── */
-
-.fleet-tab-content {
-  flex: 1;
+.fleet-layer {
   padding: 20px;
-  overflow-y: auto;
 }
 
-.tab-pane { animation: fadeIn .15s ease; }
+.fleet-layer--strategy {
+  background: var(--fc-bg);
+}
+
+.fleet-layer--live {
+  background: #0a0f15;
+  flex: 1;
+}
+
+.fleet-layer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--fc-border);
+}
+
+.fleet-layer-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fleet-layer-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+.fleet-layer-badge--strategy {
+  background: rgba(88,166,255,.12);
+  color: var(--fc-accent);
+  border: 1px solid rgba(88,166,255,.2);
+}
+
+.fleet-layer-badge--live {
+  background: rgba(63,185,80,.12);
+  color: var(--fc-success);
+  border: 1px solid rgba(63,185,80,.2);
+}
+
+.fleet-layer-sub {
+  font-size: 11px;
+  color: var(--fc-muted);
+}
+
+.fleet-layer-divider {
+  height: 3px;
+  background: linear-gradient(90deg, rgba(88,166,255,.35) 0%, rgba(30,36,44,.9) 50%, rgba(63,185,80,.35) 100%);
+}
+
+.fleet-risk-toggle {
+  background: transparent;
+  border: 1px solid var(--fc-border);
+  color: var(--fc-muted);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+
+.fleet-risk-toggle:hover,
+.fleet-risk-toggle[aria-expanded="true"] {
+  color: var(--fc-warning);
+  border-color: var(--fc-warning);
+  background: rgba(210,153,34,.08);
+}
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.fleet-layer--live .row > [class*="col-"] {
+  animation: fadeIn .2s ease;
 }
 
 /* ── Strategy Panel ─────────────────────────────────────── */
@@ -648,7 +686,7 @@ body {
 @media (max-width: 768px) {
   .fk-inner { padding: 8px 12px; }
   .fk-brand-text { font-size: 13px; }
-  .fleet-tab-content { padding: 12px; }
+  .fleet-layer { padding: 12px; }
   .summary-chip { min-width: 80px; padding: 8px 12px; }
   .summary-val { font-size: 18px; }
 }
