@@ -26,8 +26,8 @@ function allSnaps() { return mockData.snapshots[state.selectedShipId]; }
 function updateWindow() {
   if (state.timelineMode === 'NOW') {
     state.window = {
-      start: Math.max(0,  state.currentStep - 12),
-      end:   Math.min(24, state.currentStep + 12),
+      start: Math.max(0,  state.currentStep - 6),
+      end:   Math.min(24, state.currentStep + 6),
     };
   }
   // EVENT mode: window is set by onEventClick, keep unchanged
@@ -49,17 +49,18 @@ function renderContent() {
   const riskEl = document.getElementById('risk-panel-pane');
   if (riskEl) renderRiskPanel(riskEl, snap.risk, snap.fuelStatus);
 
-  renderEventList(document.getElementById('event-list-pane'), snap.events, onEventClick);
+  renderEventList(document.getElementById('event-list-pane'), snap.events, onEventClick, state.focusEventId);
   renderCrewPanel(document.getElementById('crew-panel-pane'), s);
 
   if (mapCtrl) mapCtrl.update(s, snap, state.currentStep, snaps);
 
   renderTimeline(document.getElementById('timeline-bar'), {
-    currentStep: state.currentStep,
-    window:      state.window,
-    events:      s.events,        // all ship events (including future)
-    mode:        state.timelineMode,
-    onChange:    onTimeStep,
+    currentStep:  state.currentStep,
+    window:       state.window,
+    events:       s.events,
+    mode:         state.timelineMode,
+    focusEventId: state.focusEventId,
+    onChange:     onTimeStep,
     onNow,
   });
 }
@@ -97,8 +98,8 @@ function onEventClick(event) {
   state.focusEventId = `${event.type}_${event.hour}`;
   state.currentStep  = event.hour;
   state.window = {
-    start: Math.max(0,  event.hour - 12),
-    end:   Math.min(24, event.hour + 12),
+    start: Math.max(0,  event.hour - 6),
+    end:   Math.min(24, event.hour + 6),
   };
   renderContent();
 }

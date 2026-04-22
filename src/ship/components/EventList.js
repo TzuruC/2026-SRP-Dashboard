@@ -1,4 +1,4 @@
-﻿const BASE_MS = new Date('2026-04-20T00:00:00+08:00').getTime();
+const BASE_MS = new Date('2026-04-20T00:00:00+08:00').getTime();
 
 function hourToTime(h) {
   const d = new Date(BASE_MS + h * 3_600_000);
@@ -9,9 +9,10 @@ function hourToTime(h) {
 /**
  * @param {HTMLElement} container
  * @param {Array}       events
- * @param {Function}    [onEventClick]  - optional, called with the event object
+ * @param {Function}    [onEventClick]   - called with the event object
+ * @param {string|null} [focusEventId]   - "{type}_{hour}" of the focused event (EVENT mode)
  */
-export function renderEventList(container, events, onEventClick) {
+export function renderEventList(container, events, onEventClick, focusEventId = null) {
   if (!events.length) {
     container.innerHTML = `
       <div class="panel-header">決策事件列表（0）</div>
@@ -22,16 +23,25 @@ export function renderEventList(container, events, onEventClick) {
 
   const sorted = [...events].sort((a, b) => b.hour - a.hour);
 
-  const items = sorted.map(ev => `
-    <div class="event-item${onEventClick ? ' event-clickable' : ''}"
-         data-hour="${ev.hour}" data-type="${ev.type}">
-      <span class="event-type-badge ${ev.severity}">${ev.label}</span>
-      <div>
-        <div class="event-body-desc">${ev.description}</div>
-        <div class="event-time">2026-04-20 ${hourToTime(ev.hour)} UTC+8</div>
+  const items = sorted.map(ev => {
+    const evId = `${ev.type}_${ev.hour}`;
+    const isFocused = focusEventId === evId;
+    const focusStyle = isFocused
+      ? 'border-left:3px solid var(--accent);background:rgba(88,166,255,.08);'
+      : '';
+    const focusAttr = isFocused ? ' data-focus="1"' : '';
+    return `
+      <div class="event-item${onEventClick ? ' event-clickable' : ''}"
+           data-hour="${ev.hour}" data-type="${ev.type}"
+           style="${focusStyle}"${focusAttr}>
+        <span class="event-type-badge ${ev.severity}">${ev.label}</span>
+        <div>
+          <div class="event-body-desc">${ev.description}</div>
+          <div class="event-time">2026-04-20 ${hourToTime(ev.hour)} UTC+8</div>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   container.innerHTML = `
     <div class="panel-header">決策事件列表（${events.length}）</div>
@@ -48,4 +58,8 @@ export function renderEventList(container, events, onEventClick) {
       });
     });
   }
+
+  // Scroll focused event into view
+  const focused = container.querySelector('[data-focus]');
+  if (focused) focused.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
