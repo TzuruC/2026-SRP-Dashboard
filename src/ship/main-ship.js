@@ -1,32 +1,22 @@
-import { mockData }             from "./data/mockShipData.js";
-import { renderShipList }        from "./components/ShipList.js";
-import { renderShipOverview }    from "./components/ShipOverview.js";
-import { initMapPanel }          from "./components/MapPanel.js";
-import { renderRiskPanel }       from "./components/RiskPanel.js";
-import { renderEventList,
-         renderPortEventList }   from "./components/EventList.js";
-import { renderCrewPanel }       from "./components/CrewPanel.js";
-import { renderVoyageTimeline }  from "./components/VoyageTimeline.js";
-import { renderPortTimeline }    from "./components/PortTimeline.js";
+import { mockData }            from "./data/mockShipData.js";
+import { renderShipList }       from "./components/ShipList.js";
+import { renderShipOverview }   from "./components/ShipOverview.js";
+import { initMapPanel }         from "./components/MapPanel.js";
+import { renderRiskPanel }      from "./components/RiskPanel.js";
+import { renderEventList }      from "./components/EventList.js";
+import { renderCrewPanel }      from "./components/CrewPanel.js";
+import { renderVoyageTimeline } from "./components/VoyageTimeline.js";
 
 /* ── State ──────────────────────────────────────────── */
 
 const state = {
   selectedShipId: mockData.ships[0].id,
 
-  // Voyage domain: NOW → ETA (0-24h)
   voyage: {
     step:    0,
     mode:    'NOW',   // 'NOW' | 'EVENT'
     focusId: null,
     window:  { start: 0, end: 6 },
-  },
-
-  // Port domain: ETA → ETA+72h
-  port: {
-    step:    0,       // hours after expectedEtaH (0-72)
-    focusId: null,
-    window:  { start: 0, end: 24 },
   },
 };
 
@@ -43,14 +33,6 @@ function updateVoyageWindow() {
       end:   Math.min(24, state.voyage.step + 6),
     };
   }
-  // EVENT mode: window stays locked (set by onVoyageEventClick)
-}
-
-function updatePortWindow() {
-  state.port.window = {
-    start: Math.max(0,  state.port.step - 12),
-    end:   Math.min(72, state.port.step + 12),
-  };
 }
 
 /* ── Map controller (initialized once) ─────────────── */
@@ -64,7 +46,6 @@ function renderContent() {
   const snap  = snapshot();
   const snaps = allSnaps();
 
-  // ── Voyage domain ──────────────────────────────────
   renderShipOverview(document.getElementById('ship-overview-pane'), s, snap);
 
   const riskEl = document.getElementById('risk-panel-pane');
@@ -89,25 +70,6 @@ function renderContent() {
 
   if (mapCtrl) mapCtrl.update(s, snap, state.voyage.step, snaps);
 
-  // ── Port domain ────────────────────────────────────
-  renderPortTimeline(document.getElementById('port-timeline-bar'), {
-    portStep: state.port.step,
-    window:   state.port.window,
-    events:   s.portEvents || [],
-    etaH:     s.expectedEtaH,
-    focusId:  state.port.focusId,
-    onChange: onPortStep,
-  });
-
-  renderPortEventList(
-    document.getElementById('port-event-pane'),
-    s.portEvents || [],
-    state.port.step,
-    s.expectedEtaH,
-    onPortEventClick,
-    state.port.focusId,
-  );
-
   renderCrewPanel(document.getElementById('crew-panel-pane'), s);
 }
 
@@ -129,14 +91,10 @@ function selectShip(shipId) {
   state.voyage.step    = 0;
   state.voyage.mode    = 'NOW';
   state.voyage.focusId = null;
-  state.port.step      = 0;
-  state.port.focusId   = null;
   updateVoyageWindow();
-  updatePortWindow();
   renderAll();
 }
 
-// Voyage handlers
 function onVoyageStep(step) {
   state.voyage.step = step;
   updateVoyageWindow();
@@ -161,30 +119,11 @@ function onVoyageNow() {
   renderContent();
 }
 
-// Port handlers
-function onPortStep(step) {
-  state.port.step = step;
-  updatePortWindow();
-  renderContent();
-}
-
-function onPortEventClick(ev) {
-  const offset         = ev.hour - ship().expectedEtaH;
-  state.port.focusId   = `${ev.type}_${ev.hour}`;
-  state.port.step      = Math.max(0, Math.min(72, offset));
-  state.port.window    = {
-    start: Math.max(0,  state.port.step - 12),
-    end:   Math.min(72, state.port.step + 12),
-  };
-  renderContent();
-}
-
 /* ── Init ───────────────────────────────────────────── */
 
 function init() {
   mapCtrl = initMapPanel(document.getElementById('map-panel-pane'));
   updateVoyageWindow();
-  updatePortWindow();
   renderAll();
 }
 
