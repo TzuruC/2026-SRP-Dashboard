@@ -10,7 +10,7 @@ const PERIOD_TABS = [
   { key: 'yearly',    label: '年' },
 ];
 
-const Y_UNIT  = { fuel: 'MT', delay: '%' };
+const Y_UNIT  = { fuel: ' MT', delay: '%' };
 const Y_TITLE = { fuel: '燃油消耗（MT）', delay: '延誤率（%）' };
 
 let _chart = null;
@@ -72,23 +72,19 @@ export function renderFleetTrendPanel(container, ships) {
 
   function drawChart() {
     destroyTrendChart();
-    const canvas = container.querySelector('#fleet-trend-chart');
-    if (!canvas) return;
-    if (typeof Chart === 'undefined') {
+    const chartDiv = container.querySelector('#fleet-trend-chart');
+    if (!chartDiv) return;
+    if (typeof Highcharts === 'undefined') {
       const wrap = container.querySelector('.trend-chart-wrap');
       if (wrap) wrap.innerHTML = '<div class="trend-empty">圖表庫載入中...</div>';
       return;
     }
 
-    const pd = td[state.period];
-    const { labels, datasets } = buildDatasets(ships, pd, state);
+    const pd        = td[state.period];
     const isStacked = state.metric === 'fuel' && state.fuelMode === 'breakdown' && state.mode === 'fleet';
+    const series    = buildSeries(ships, pd, state);
 
-    _chart = new Chart(canvas, {
-      type: 'line',
-      data: { labels, datasets },
-      options: buildChartOptions(state, isStacked),
-    });
+    _chart = Highcharts.chart(chartDiv, buildHighchartsConfig(pd.labels, series, state, isStacked));
   }
 
   repaint();
@@ -125,7 +121,7 @@ function buildHTML(ships, state) {
 
   const chartArea = state.mode === 'compare' && state.compareShips.length === 0
     ? `<div class="trend-empty">請選擇最多 3 艘船進行比較</div>`
-    : `<div class="trend-chart-wrap"><canvas id="fleet-trend-chart"></canvas></div>`;
+    : `<div class="trend-chart-wrap"><div id="fleet-trend-chart"></div></div>`;
 
   return `
     <div class="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
@@ -168,23 +164,60 @@ function buildComparePanelHTML(ships, state) {
     </div>`;
 }
 
-/* ── Dataset builder ──────────────────────────────────────── */
+/* ── Highcharts series builder ────────────────────────────── */
 
-function buildDatasets(ships, pd, state) {
-  const labels   = pd.labels;
-  const datasets = [];
-  const n        = ships.length;
+function hex2rgba(hex, a) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function areaSeries(name, data, color, solidFill) {
+  return {
+    name,
+    type:      'area',
+    data,
+    color,
+    fillColor: solidFill
+      ? hex2rgba(color, 0.45)
+      : {
+          linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+          stops: [
+            [0, hex2rgba(color, 0.35)],
+            [1, hex2rgba(color, 0.02)],
+          ],
+        },
+    lineWidth: 2,
+    marker:    { radius: 3, symbol: 'circle' },
+  };
+}
+
+function lineSeries(name, data, color) {
+  return {
+    name,
+    type:      'line',
+    data,
+    color,
+    lineWidth: 2,
+    marker:    { radius: 3, symbol: 'circle' },
+  };
+}
+
+function buildSeries(ships, pd, state) {
+  const series = [];
+  const n      = ships.length;
 
   if (state.mode === 'fleet') {
     if (state.metric === 'fuel') {
       if (state.fuelMode === 'total') {
-        datasets.push(lineDs('船隊燃油消耗', pd.fleetFuelTotal, '#58a6ff', 'rgba(88,166,255,0.15)', true));
+        series.push(areaSeries('船隊燃油消耗', pd.fleetFuelTotal, '#58a6ff', false));
       } else {
-        datasets.push(lineDs('主機燃油', pd.fleetFuelMain, '#58a6ff', 'rgba(88,166,255,0.45)', true));
-        datasets.push(lineDs('輔機燃油', pd.fleetFuelAux,  '#f0883e', 'rgba(240,136,62,0.45)',  true));
+        series.push(areaSeries('主機燃油', pd.fleetFuelMain, '#58a6ff', true));
+        series.push(areaSeries('輔機燃油', pd.fleetFuelAux,  '#f0883e', true));
       }
     } else {
-      datasets.push(lineDs('延誤率', pd.fleetDelayRate, '#d29922', 'rgba(210,153,34,0.15)', true));
+      series.push(areaSeries('延誤率', pd.fleetDelayRate, '#d29922', false));
     }
   } else {
     state.compareShips.forEach((shipId, idx) => {
@@ -193,80 +226,81 @@ function buildDatasets(ships, pd, state) {
       const shipPd = pd.ships[shipId];
       if (!shipPd) return;
       const data   = state.metric === 'fuel' ? shipPd.fuel : shipPd.delay;
-      datasets.push(lineDs(ship.name, data, SHIP_COLORS[idx], SHIP_COLORS[idx] + '28', false));
+      series.push(lineSeries(ship.name, data, SHIP_COLORS[idx]));
     });
 
     if (state.showAverage && state.compareShips.length > 0) {
       const avgData = state.metric === 'fuel'
         ? pd.fleetFuelTotal.map(v => +(v / n).toFixed(1))
         : pd.fleetDelayRate;
-      datasets.push({
-        label:           '船隊平均',
-        data:            avgData,
-        borderColor:     'rgba(200,210,220,0.55)',
-        backgroundColor: 'transparent',
-        borderWidth:     1.5,
-        borderDash:      [6, 3],
-        pointRadius:     0,
-        tension:         0.3,
-        fill:            false,
+      series.push({
+        name:       '船隊平均',
+        type:       'line',
+        data:       avgData,
+        color:      'rgba(200,210,220,0.55)',
+        dashStyle:  'Dash',
+        lineWidth:  1.5,
+        marker:     { enabled: false },
       });
     }
   }
 
-  return { labels, datasets };
+  return series;
 }
 
-function lineDs(label, data, borderColor, backgroundColor, fill) {
-  return { label, data, borderColor, backgroundColor, borderWidth: 2, pointRadius: 3, tension: 0.3, fill };
-}
+/* ── Highcharts config ────────────────────────────────────── */
 
-/* ── Chart options ────────────────────────────────────────── */
-
-function buildChartOptions(state, isStacked) {
+function buildHighchartsConfig(labels, series, state, isStacked) {
   const unit = Y_UNIT[state.metric];
   return {
-    responsive:          true,
-    maintainAspectRatio: false,
-    interaction:         { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        display:  true,
-        position: 'bottom',
-        labels: {
-          color:    '#8b949e',
-          boxWidth: 12,
-          padding:  12,
-          font:     { size: 12 },
-        },
+    chart: {
+      backgroundColor: 'transparent',
+      plotBorderWidth:  0,
+      animation:        { duration: 300 },
+      style:            { fontFamily: "'Segoe UI', system-ui, sans-serif" },
+    },
+    title:   { text: null },
+    credits: { enabled: false },
+    legend: {
+      enabled:        true,
+      align:          'center',
+      verticalAlign:  'bottom',
+      itemStyle:      { color: '#8b949e', fontSize: '12px', fontWeight: '500' },
+      itemHoverStyle: { color: '#e6edf3' },
+    },
+    xAxis: {
+      categories:    labels,
+      gridLineColor: 'rgba(48,54,61,0.6)',
+      lineColor:     '#30363d',
+      tickColor:     '#30363d',
+      labels:        { style: { color: '#8b949e', fontSize: '11px' } },
+    },
+    yAxis: {
+      title:         { text: Y_TITLE[state.metric], style: { color: '#8b949e', fontSize: '11px' } },
+      gridLineColor: 'rgba(48,54,61,0.6)',
+      labels:        { style: { color: '#8b949e', fontSize: '11px' }, format: `{value}` },
+    },
+    tooltip: {
+      backgroundColor: '#161b22',
+      borderColor:     '#30363d',
+      borderRadius:    6,
+      style:           { color: '#e6edf3', fontSize: '12px' },
+      shared:          true,
+      valueSuffix:     unit,
+    },
+    plotOptions: {
+      area: {
+        stacking:  isStacked ? 'normal' : undefined,
+        lineWidth: 2,
+        states:    { hover: { lineWidth: 2 } },
+        marker:    { radius: 3, symbol: 'circle', states: { hover: { radius: 5 } } },
       },
-      tooltip: {
-        backgroundColor: '#161b22',
-        titleColor:      '#e6edf3',
-        bodyColor:       '#8b949e',
-        borderColor:     '#30363d',
-        borderWidth:     1,
-        padding:         10,
-        callbacks: {
-          label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} ${unit}`,
-        },
+      line: {
+        lineWidth: 2,
+        states:    { hover: { lineWidth: 2 } },
+        marker:    { radius: 3, symbol: 'circle', states: { hover: { radius: 5 } } },
       },
     },
-    scales: {
-      x: {
-        grid:  { color: 'rgba(48,54,61,0.6)' },
-        ticks: { color: '#8b949e', font: { size: 11 } },
-      },
-      y: {
-        stacked: isStacked,
-        grid:    { color: 'rgba(48,54,61,0.6)' },
-        title:   { display: true, text: Y_TITLE[state.metric], color: '#8b949e', font: { size: 11 } },
-        ticks: {
-          color: '#8b949e',
-          font:  { size: 11 },
-          callback: v => `${v}`,
-        },
-      },
-    },
+    series,
   };
 }
