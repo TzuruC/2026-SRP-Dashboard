@@ -276,6 +276,17 @@ export const mockFleetData = {
     },
   },
 
+  ports: [
+    { id: 'PRT001', name: '上海港', lat: 31.25, lng: 121.50, type: 'major',   isFuel: true,  callCount: 15, lastVisit: '2026-04-18T06:00:00Z', inPort: 0, arriving24h: 1 },
+    { id: 'PRT002', name: '高雄港', lat: 22.62, lng: 120.27, type: 'major',   isFuel: true,  callCount:  8, lastVisit: '2026-04-20T14:00:00Z', inPort: 1, arriving24h: 0 },
+    { id: 'PRT003', name: '釜山港', lat: 35.10, lng: 129.04, type: 'major',   isFuel: false, callCount: 10, lastVisit: '2026-04-19T08:00:00Z', inPort: 0, arriving24h: 1 },
+    { id: 'PRT004', name: '廣州港', lat: 22.55, lng: 113.60, type: 'regular', isFuel: false, callCount:  5, lastVisit: '2026-04-15T10:00:00Z', inPort: 0, arriving24h: 1 },
+    { id: 'PRT005', name: '香港',   lat: 22.30, lng: 114.18, type: 'major',   isFuel: true,  callCount: 12, lastVisit: '2026-04-21T03:00:00Z', inPort: 0, arriving24h: 1 },
+    { id: 'PRT006', name: '基隆港', lat: 25.13, lng: 121.74, type: 'regular', isFuel: false, callCount:  6, lastVisit: '2026-04-17T12:00:00Z', inPort: 0, arriving24h: 1 },
+    { id: 'PRT007', name: '台北港', lat: 25.15, lng: 121.78, type: 'regular', isFuel: false, callCount:  4, lastVisit: '2026-04-23T00:00:00Z', inPort: 1, arriving24h: 0 },
+    { id: 'PRT008', name: '大阪港', lat: 34.65, lng: 135.43, type: 'major',   isFuel: true,  callCount:  7, lastVisit: '2026-04-10T18:00:00Z', inPort: 0, arriving24h: 0 },
+  ],
+
   events: [
     { id: 'EVT001', shipId: 'SHP001', type: 'delay',          severity: 'medium', timestamp: '2026-04-20T22:15:00Z', description: '預計延誤 2.5 小時抵達上海港' },
     { id: 'EVT002', shipId: 'SHP002', type: 'speedAnomaly',   severity: 'high',   timestamp: '2026-04-20T21:30:00Z', description: '航速降至 6.2 節，疑似主機故障' },

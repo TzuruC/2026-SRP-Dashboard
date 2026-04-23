@@ -926,6 +926,303 @@ body {
 .rank-value.best  { color: var(--fc-success); }
 .rank-value.worst { color: var(--fc-danger);  }
 
+/* ── Map Distribution Layer ─────────────────────────────── */
+
+.fleet-layer--map { background: #0b0f15; }
+
+.fleet-layer-badge--map {
+  background: rgba(240,136,62,.12);
+  color: #f0883e;
+  border: 1px solid rgba(240,136,62,.2);
+}
+
+/* Layer toolbar */
+.fm-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.fm-layer-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fm-layer-label {
+  font-size: 12px;
+  color: var(--fc-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-right: 2px;
+}
+
+.fm-layer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--fc-muted);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: color .15s, border-color .15s, background .15s;
+}
+
+.fm-layer-toggle input[type=checkbox] {
+  accent-color: var(--fc-accent);
+  cursor: pointer;
+  width: 13px;
+  height: 13px;
+}
+
+.fm-layer-toggle.active {
+  color: var(--fc-text);
+  border-color: rgba(88,166,255,.3);
+  background: rgba(88,166,255,.08);
+}
+
+.fm-layer-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--fc-border);
+  margin: 0 4px;
+}
+
+.fm-hint {
+  font-size: 12px;
+  color: var(--fc-muted);
+  margin-left: auto;
+}
+
+/* Map canvas */
+.fm-map-container {
+  width: 100%;
+  height: 480px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--fc-border);
+  position: relative;
+}
+
+/* ── Vessel markers ─────────────────────────────────────── */
+
+.fm-vessel-marker {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(230,237,243,0.7);
+  background: rgba(13,17,23,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  font-size: 13px;
+  color: #e6edf3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.55);
+  transition: transform .15s;
+}
+
+.fm-vessel-marker:hover { transform: scale(1.15); }
+
+.fm-vessel--normal  { border-color: rgba(230,237,243,0.75); }
+.fm-vessel--anomaly { border-color: #d29922; }
+.fm-vessel--in-port { border-color: rgba(139,148,158,0.45); opacity: 0.75; }
+
+.fm-vessel-badges {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.fm-anom {
+  font-size: 10px;
+  line-height: 1.2;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+}
+
+.fm-vessel-pulse {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d29922;
+  animation: pulse 1.5s infinite;
+}
+
+/* ── Port markers ───────────────────────────────────────── */
+
+.fm-port-marker {
+  width: 22px;
+  height: 22px;
+  background: rgba(13,17,23,0.88);
+  border: 1px solid rgba(88,166,255,0.35);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #58a6ff;
+  position: relative;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+}
+
+.fm-port--regular {
+  border-color: rgba(139,148,158,0.35);
+  color: #8b949e;
+}
+
+.fm-port-fuel {
+  position: absolute;
+  bottom: -9px;
+  right: -8px;
+  font-size: 9px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));
+}
+
+/* ── Leaflet tooltip override ───────────────────────────── */
+
+.fm-tooltip {
+  background: rgba(22,27,34,0.94) !important;
+  border: 1px solid #30363d !important;
+  color: #e6edf3 !important;
+  font-family: 'Segoe UI', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  border-radius: 5px !important;
+  padding: 4px 9px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45) !important;
+}
+
+.fm-tooltip::before { display: none !important; }
+
+/* ── Leaflet popup dark theme ───────────────────────────── */
+
+.fm-popup .leaflet-popup-content-wrapper {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.65);
+  padding: 0;
+}
+
+.fm-popup .leaflet-popup-content {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.fm-popup .leaflet-popup-tip-container { display: none; }
+
+.fm-popup a.leaflet-popup-close-button {
+  color: #8b949e;
+  font-size: 18px;
+  padding: 6px 8px 0 0;
+  top: 0;
+  right: 0;
+}
+
+.fm-popup a.leaflet-popup-close-button:hover {
+  color: #e6edf3;
+  background: transparent;
+}
+
+/* ── Info cards ─────────────────────────────────────────── */
+
+.fm-ship-card,
+.fm-port-card { padding: 14px 16px; }
+
+.fm-card-head {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #30363d;
+}
+
+.fm-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e6edf3;
+  margin-bottom: 2px;
+}
+
+.fm-card-meta { font-size: 12px; color: #8b949e; }
+
+.fm-card-route {
+  font-size: 13px;
+  color: #8b949e;
+  margin-bottom: 8px;
+}
+
+.fm-route-arrow { color: #58a6ff; margin: 0 3px; }
+
+.fm-card-anomalies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.fm-card-anomalies span {
+  font-size: 12px;
+  background: rgba(210,153,34,0.12);
+  color: #d29922;
+  border: 1px solid rgba(210,153,34,0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.fm-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.fm-card-stats--col1 { grid-template-columns: 1fr; }
+
+.fm-stat { display: flex; flex-direction: column; gap: 1px; }
+
+.fm-stat-lbl {
+  font-size: 11px;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.fm-stat-val { font-size: 13px; font-weight: 600; color: #e6edf3; }
+.fm-stat-val.success { color: #3fb950; }
+.fm-stat-val.warning { color: #d29922; }
+.fm-stat-val.danger  { color: #f85149; }
+
+.fm-card-link {
+  display: block;
+  text-align: center;
+  padding: 8px 12px;
+  background: rgba(88,166,255,0.1);
+  border: 1px solid rgba(88,166,255,0.22);
+  border-radius: 6px;
+  color: #58a6ff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s;
+}
+
+.fm-card-link:hover {
+  background: rgba(88,166,255,0.18);
+  color: #58a6ff;
+}
+
 /* ── Responsive ─────────────────────────────────────────── */
 
 @media (max-width: 768px) {

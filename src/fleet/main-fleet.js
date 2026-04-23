@@ -3,6 +3,7 @@ import { renderFleetKPIHeader } from './components/FleetKPIHeader.js';
 import { renderFleetStrategyPanel } from './components/FleetStrategyPanel.js';
 import { renderFleetLivePanel } from './components/FleetLivePanel.js';
 import { renderFleetRiskPanel } from './components/FleetRiskPanel.js';
+import { renderFleetMapPanel } from './components/FleetMapPanel.js';
 
 const state = {
   ships: mockFleetData.ships,
@@ -46,8 +47,9 @@ function onDrillDown(shipId) {
 function init() {
   renderKPI();
   renderAll();
+  // Map is initialised once — Leaflet does not survive full DOM re-creation
+  renderFleetMapPanel(getContainer('fleet-map-panel'), state.ships, mockFleetData.ports);
 
-  // Simulate live refresh every 30s
   setInterval(() => {
     renderKPI();
     renderAll();
