@@ -23,7 +23,10 @@ body {
   color: var(--fc-text);
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 18px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── KPI Header ─────────────────────────────────────────── */
@@ -34,6 +37,7 @@ body {
   z-index: 100;
   background: var(--fc-surface);
   border-bottom: 1px solid var(--fc-border);
+  flex-shrink: 0;
 }
 
 .fk-inner {
@@ -128,9 +132,29 @@ body {
 /* ── Main Layout ────────────────────────────────────────── */
 
 .fleet-main {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 56px);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fleet-main > .row {
+  height: 100%;
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+#fleet-sidebar {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--fc-border);
+}
+
+#fleet-main-col {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
 }
 
 /* ── Layer Layout ───────────────────────────────────────── */
