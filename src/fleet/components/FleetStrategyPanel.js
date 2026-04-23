@@ -1,3 +1,5 @@
+import { destroyTrendChart, renderFleetTrendPanel } from './FleetTrendPanel.js';
+
 const CII_COLOR = { A: '#3fb950', B: '#58a6ff', C: '#d29922', D: '#f85149', E: '#f85149' };
 
 const KPI_TYPES = [
@@ -146,6 +148,7 @@ function renderCompositeTable(ships) {
 }
 
 export function renderFleetStrategyPanel(container, ships, rankingKPI, onRankingKPIChange) {
+  destroyTrendChart();
   const kpi        = rankingKPI || 'composite';
   const isComposite = kpi === 'composite';
 
@@ -224,40 +227,8 @@ export function renderFleetStrategyPanel(container, ships, rankingKPI, onRanking
         }
       </div>
 
-      <!-- Trend Chart Placeholders -->
-      <div class="strategy-section">
-        <div class="strategy-section-title">趨勢分析（待整合圖表庫）</div>
-        <div class="row g-3">
-          <div class="col-12 col-md-6">
-            <div class="chart-placeholder">
-              <div class="chart-ph-icon">📈</div>
-              <div class="chart-ph-title">燃油效率趨勢</div>
-              <div class="chart-ph-sub">7 日燃油效率變化折線圖</div>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="chart-placeholder">
-              <div class="chart-ph-icon">🎯</div>
-              <div class="chart-ph-title">CII 評級分佈</div>
-              <div class="chart-ph-sub">船隊 CII 等級圓餅圖</div>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="chart-placeholder">
-              <div class="chart-ph-icon">⏱</div>
-              <div class="chart-ph-title">延誤時間分佈</div>
-              <div class="chart-ph-sub">各船延誤分鐘數長條圖</div>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="chart-placeholder">
-              <div class="chart-ph-icon">🗺</div>
-              <div class="chart-ph-title">航路效率地圖</div>
-              <div class="chart-ph-sub">偏航 / ECA 管制區疊加</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Trend Overview -->
+      <div class="strategy-section" id="fleet-trend-container"></div>
 
     </div>
   `;
@@ -267,4 +238,7 @@ export function renderFleetStrategyPanel(container, ships, rankingKPI, onRanking
       if (onRankingKPIChange) onRankingKPIChange(btn.dataset.kpi);
     });
   });
+
+  const trendContainer = container.querySelector('#fleet-trend-container');
+  if (trendContainer) renderFleetTrendPanel(trendContainer, ships);
 }

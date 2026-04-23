@@ -338,27 +338,150 @@ body {
 .warning { color: var(--fc-warning); }
 .danger  { color: var(--fc-danger); }
 
-/* ── Chart Placeholders ─────────────────────────────────── */
+/* ── Trend Overview ─────────────────────────────────────── */
 
-.chart-placeholder {
+.trend-period-tabs {
+  display: flex;
+  gap: 2px;
   background: var(--fc-card);
-  border: 1px dashed var(--fc-border);
-  border-radius: 8px;
-  padding: 32px 16px;
-  text-align: center;
+  border: 1px solid var(--fc-border);
+  border-radius: 6px;
+  padding: 3px;
+  flex-shrink: 0;
 }
 
-.chart-ph-icon { font-size: 28px; margin-bottom: 8px; }
-
-.chart-ph-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.chart-ph-sub {
-  font-size: 14px;
+.trend-period-btn {
+  background: transparent;
+  border: none;
   color: var(--fc-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+}
+
+.trend-period-btn:hover { color: var(--fc-text); }
+
+.trend-period-btn.active {
+  background: var(--fc-surface);
+  color: var(--fc-text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+
+.trend-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.trend-seg {
+  display: flex;
+  gap: 2px;
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.trend-seg-btn {
+  background: transparent;
+  border: none;
+  color: var(--fc-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  white-space: nowrap;
+}
+
+.trend-seg-btn:hover { color: var(--fc-text); }
+
+.trend-seg-btn.active {
+  background: var(--fc-surface);
+  color: var(--fc-text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+
+.trend-compare-ships {
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.trend-compare-label {
+  font-size: 12px;
+  color: var(--fc-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+
+.trend-compare-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.trend-ship-check,
+.trend-avg-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--fc-text);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.trend-ship-check input,
+.trend-avg-toggle input {
+  accent-color: var(--fc-accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.trend-avg-toggle {
+  margin-left: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--fc-border);
+  color: var(--fc-muted);
+}
+
+.trend-color-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.trend-chart-wrap {
+  position: relative;
+  height: 280px;
+}
+
+.trend-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+  color: var(--fc-muted);
+  font-size: 14px;
+  background: var(--fc-card);
+  border-radius: 6px;
+  border: 1px dashed var(--fc-border);
 }
 
 /* ── Live Panel ─────────────────────────────────────────── */
