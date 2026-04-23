@@ -3,7 +3,7 @@ import { renderFleetKPIHeader } from './components/FleetKPIHeader.js';
 import { renderFleetStrategyPanel } from './components/FleetStrategyPanel.js';
 import { renderFleetLivePanel } from './components/FleetLivePanel.js';
 import { renderFleetRiskPanel } from './components/FleetRiskPanel.js';
-import { renderFleetMapPanel } from './components/FleetMapPanel.js';
+import { renderFleetMapPanel, focusShipOnMap } from './components/FleetMapPanel.js';
 
 const state = {
   ships: mockFleetData.ships,
@@ -26,7 +26,7 @@ function renderAll() {
     state.rankingKPI,
     onRankingKPIChange
   );
-  renderFleetLivePanel(getContainer('fleet-live-panel'), state.ships, onDrillDown);
+  renderFleetLivePanel(getContainer('fleet-live-panel'), state.ships, onDrillDown, focusShipOnMap);
   renderFleetRiskPanel(getContainer('fleet-risk-panel'), state.ships, state.events);
 }
 

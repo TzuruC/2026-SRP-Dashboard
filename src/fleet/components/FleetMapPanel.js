@@ -6,6 +6,8 @@ let _activeShipId = null;
 let _routeLayers  = { historical: null, predicted: null };
 const _shipMarkers = {};
 const _portMarkers = {};
+let _ships    = [];
+let _portsMap = {};
 
 // Static origin-port lookup (avoids modifying ship data objects)
 const SHIP_ORIGINS = {
@@ -29,6 +31,13 @@ export function destroyMapPanel() {
   _routeLayers  = { historical: null, predicted: null };
   for (const k in _shipMarkers) delete _shipMarkers[k];
   for (const k in _portMarkers) delete _portMarkers[k];
+}
+
+export function focusShipOnMap(shipId) {
+  if (!_map) return;
+  const ship = _ships.find(s => s.id === shipId);
+  if (!ship) return;
+  onShipClick(ship, _portsMap);
 }
 
 export function renderFleetMapPanel(container, ships, ports) {
@@ -66,7 +75,9 @@ function initLeafletMap(container, ships, ports) {
   const mapEl = container.querySelector('#fleet-map-leaflet');
   if (!mapEl || typeof L === 'undefined') return;
 
-  const portsMap = Object.fromEntries(ports.map(p => [p.name, p]));
+  _ships   = ships;
+  _portsMap = Object.fromEntries(ports.map(p => [p.name, p]));
+  const portsMap = _portsMap;
 
   const avgLat = ships.reduce((s, sh) => s + sh.lat, 0) / ships.length;
   const avgLng = ships.reduce((s, sh) => s + sh.lng, 0) / ships.length;

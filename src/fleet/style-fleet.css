@@ -510,7 +510,45 @@ body {
 
 /* ── Live Panel ─────────────────────────────────────────── */
 
-.live-wrap { display: flex; flex-direction: column; gap: 16px; }
+.live-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.live-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.live-search-icon {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: var(--fc-muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.live-search-input {
+  width: 100%;
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 6px;
+  color: var(--fc-text);
+  font-size: 14px;
+  padding: 7px 10px 7px 32px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.live-search-input::placeholder { color: var(--fc-muted); }
+.live-search-input:focus { border-color: var(--fc-accent); }
+
+.live-card { cursor: pointer; }
+
+.live-card--active {
+  border-color: var(--fc-accent) !important;
+  box-shadow: 0 0 0 2px rgba(88,166,255,.25);
+}
 
 .live-header-bar {
   display: flex;
