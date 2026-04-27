@@ -1,0 +1,1030 @@
+﻿:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #c9d1d9;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --warning: #d29922;
+  --danger: #f85149;
+  --success: #3fb950;
+  --map-h: 320px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 18px;
+}
+
+/* ── Layout ─────────────────────────────────────────── */
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#main-area {
+  flex: 1;
+  overflow: hidden;
+}
+
+#main-content {
+  overflow-y: auto;
+}
+
+#ship-list-pane {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+#map-panel-pane {
+  height: var(--map-h);
+  border-bottom: 1px solid var(--border-color);
+}
+
+#event-list-pane {
+  border-right: 1px solid var(--border-color);
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+/* voyage event pane (replaces #event-list-pane in new layout) */
+#voyage-event-pane {
+  border-right: 1px solid var(--border-color);
+  max-height: 340px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+#crew-panel-pane {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+#risk-panel-pane {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+}
+
+/* ── Section divider (Voyage) ────────────────────────── */
+
+.section-divider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 16px;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.section-divider--voyage {
+  border-left: 3px solid var(--accent);
+  color: var(--accent);
+}
+
+.section-divider-sub {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+
+/* ── Shared panel components ─────────────────────────── */
+
+.panel-header {
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-header .update-time {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+.panel-body {
+  padding: 10px 12px;
+}
+
+/* ── Ship list ───────────────────────────────────────── */
+
+.s-ship-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.s-ship-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.s-ship-item.selected {
+  background: #1f3a5f;
+  border-left: 3px solid var(--accent);
+}
+
+.s-ship-name {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.s-ship-meta {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.s-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.s-dot.ok {
+  background: var(--success);
+}
+
+.s-dot.warning {
+  background: var(--warning);
+}
+
+.s-dot.danger {
+  background: var(--danger);
+}
+
+/* ── Ship overview ───────────────────────────────────── */
+
+.overview-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.overview-ship-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 12px;
+}
+
+.overview-tag {
+  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+
+.overview-meta-bar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 6px 16px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.overview-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-field-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 1px;
+}
+
+.overview-field-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.overview-field-value.warning {
+  color: var(--warning);
+}
+
+.overview-field-value.danger {
+  color: var(--danger);
+}
+
+.overview-field-value.success {
+  color: var(--success);
+}
+
+.overview-panels {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.overview-sub-panel {
+  padding: 0;
+  border-right: 1px solid var(--border-color);
+}
+
+.overview-sub-panel:last-child {
+  border-right: none;
+}
+
+.sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sub-row:last-child {
+  border-bottom: none;
+}
+
+.sub-label {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.sub-value {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sub-value.warning {
+  color: var(--warning);
+}
+
+.sub-value.danger {
+  color: var(--danger);
+}
+
+.sub-value.success {
+  color: var(--success);
+}
+
+.fuel-bar-wrap {
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.fuel-bar {
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fuel-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* ── Risk panel ──────────────────────────────────────── */
+
+.risk-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.risk-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.risk-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.risk-badge {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 3px;
+}
+
+.risk-badge.高 {
+  background: rgba(248, 81, 73, .18);
+  color: var(--danger);
+  border: 1px solid rgba(248, 81, 73, .35);
+}
+
+.risk-badge.中 {
+  background: rgba(210, 153, 34, .18);
+  color: var(--warning);
+  border: 1px solid rgba(210, 153, 34, .35);
+}
+
+.risk-badge.低 {
+  background: rgba(63, 185, 80, .18);
+  color: var(--success);
+  border: 1px solid rgba(63, 185, 80, .35);
+}
+
+.risk-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.risk-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.risk-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.risk-fill.高 {
+  background: var(--danger);
+}
+
+.risk-fill.中 {
+  background: var(--warning);
+}
+
+.risk-fill.低 {
+  background: var(--success);
+}
+
+.risk-pct {
+  font-size: 14px;
+  color: var(--text-muted);
+  min-width: 34px;
+  text-align: right;
+}
+
+/* ── Event list ──────────────────────────────────────── */
+
+.event-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  transition: background 0.12s;
+}
+
+.event-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.event-type-badge {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.event-type-badge.high {
+  background: rgba(248, 81, 73, .18);
+  color: var(--danger);
+  border: 1px solid rgba(248, 81, 73, .35);
+}
+
+.event-type-badge.medium {
+  background: rgba(210, 153, 34, .18);
+  color: var(--warning);
+  border: 1px solid rgba(210, 153, 34, .35);
+}
+
+.event-type-badge.low {
+  background: rgba(63, 185, 80, .18);
+  color: var(--success);
+  border: 1px solid rgba(63, 185, 80, .35);
+}
+
+.event-body-desc {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.event-time {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.no-events {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ── Crew panel ──────────────────────────────────────── */
+
+.crew-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crew-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.crew-rank {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.service-bar-wrap {
+  width: 90px;
+}
+
+.service-bar {
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.service-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.service-fill.ok {
+  background: var(--success);
+}
+
+.service-fill.warning {
+  background: var(--warning);
+}
+
+.service-fill.danger {
+  background: var(--danger);
+}
+
+.service-days {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.cert-item {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.cert-name {
+  font-size: 16px;
+  flex: 1;
+}
+
+.cert-badge {
+  font-size: 14px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.cert-badge.正常 {
+  background: rgba(63, 185, 80, .18);
+  color: var(--success);
+  border: 1px solid rgba(63, 185, 80, .35);
+}
+
+.cert-badge.即將到期 {
+  background: rgba(210, 153, 34, .18);
+  color: var(--warning);
+  border: 1px solid rgba(210, 153, 34, .35);
+}
+
+.cert-badge.緊急 {
+  background: rgba(248, 81, 73, .18);
+  color: var(--danger);
+  border: 1px solid rgba(248, 81, 73, .35);
+}
+
+
+/* -- Crew anomaly alert ----------------------------------------- */
+.crew-anomaly-block {
+  margin: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.crew-anomaly-ok {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: var(--success);
+  font-size: 14px;
+}
+
+.crew-anomaly-icon {
+  font-size: 15px;
+}
+
+.crew-anomaly-item {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.crew-anomaly-item:last-child {
+  border-bottom: none;
+}
+
+.crew-anomaly-item.crew-anomaly-danger {
+  border-left: 3px solid var(--danger);
+}
+
+.crew-anomaly-item.crew-anomaly-warning {
+  border-left: 3px solid var(--warning);
+}
+
+.crew-anomaly-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+
+.crew-anomaly-badge {
+  font-size: 14px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.crew-anomaly-badge-warning {
+  background: rgba(210, 153, 34, .18);
+  color: var(--warning);
+  border: 1px solid rgba(210, 153, 34, .35);
+}
+
+.crew-anomaly-badge-danger {
+  background: rgba(248, 81, 73, .18);
+  color: var(--danger);
+  border: 1px solid rgba(248, 81, 73, .35);
+}
+
+.crew-anomaly-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.crew-anomaly-rank {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.crew-anomaly-detail {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding-left: 2px;
+}
+
+
+/* ── Timeline bar ────────────────────────────────────── */
+
+#timeline-bar,
+#voyage-timeline-bar {
+  height: 104px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, .3);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.tl-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Button group ─────────────────────────────────────── */
+
+.tl-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tl-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+  transition: background .18s, border-color .18s, transform .18s, box-shadow .18s;
+  line-height: 1;
+}
+
+.tl-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 4px 14px rgba(88, 166, 255, .4);
+}
+
+.tl-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(88, 166, 255, .4);
+}
+
+/* "回到現在" 特殊按鈕 */
+.tl-now-btn {
+  width: auto;
+  border-radius: 20px;
+  padding: 0 14px;
+  font-size: 14px;
+  height: 34px;
+  background: rgba(88, 166, 255, .12);
+  border-color: rgba(88, 166, 255, .4);
+  color: var(--accent);
+}
+
+.tl-now-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* 時間戳記文字 */
+.tl-time {
+  font-size: 14px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 155px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Track wrap ───────────────────────────────────────── */
+
+.tl-track-wrap {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 0 20px;
+}
+
+.tl-events-layer {
+  position: absolute;
+  top: 33px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.tl-ev-dot {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid rgba(255, 255, 255, 0.25);
+  /* 三角形的顏色 */
+  top: 3px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 4;
+  background: none;
+  /* 確保沒有背景色 */
+}
+
+.tl-ev-dot:hover {
+  transform: scale(1.45) !important;
+}
+
+.tl-win-overlay {
+  position: absolute;
+  top: 38px;
+  height: 26px;
+  background: rgba(88, 166, 255, .07);
+  border: 1px solid rgba(88, 166, 255, .2);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* EVENT mode anchor line */
+.tl-anchor-line {
+  position: absolute;
+  top: 28px;
+  height: 46px;
+  width: 0;
+  border-left: 2px dashed rgba(210, 153, 34, .7);
+  pointer-events: none;
+  z-index: 2;
+  transform: translateX(-1px);
+}
+
+/* ── Custom range slider ──────────────────────────────── */
+
+.tl-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+/* WebKit (Chrome / Edge / Safari) */
+.tl-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+}
+
+.tl-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 0 6px rgba(88, 166, 255, .55);
+  cursor: pointer;
+  margin-top: -6px;
+  transition: transform .15s, box-shadow .15s;
+}
+
+.tl-slider::-webkit-slider-thumb:hover,
+.tl-slider:active::-webkit-slider-thumb {
+  transform: scale(1.3);
+  box-shadow: 0 0 12px rgba(88, 166, 255, .8);
+}
+
+/* Firefox */
+.tl-slider::-moz-range-track {
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+}
+
+.tl-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 0 6px rgba(88, 166, 255, .55);
+  cursor: pointer;
+}
+
+/* ── Tick labels ──────────────────────────────────────── */
+
+.tl-ticks {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  pointer-events: none;
+}
+
+.tl-tick {
+  position: absolute;
+  font-size: 14px;
+  color: var(--text-muted);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: color .2s, font-weight .2s;
+}
+
+/* 最近的主刻度：稍微亮一些 */
+.tl-tick.near {
+  color: var(--text-primary);
+}
+
+/* 當前位置剛好在刻度上：accent 高亮 */
+.tl-tick.cur {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.event-clickable {
+  cursor: pointer;
+}
+
+/* ── Timeline RWD ─────────────────────────────────────── */
+
+@media (max-width: 767.98px) {
+  #timeline-bar,
+  #voyage-timeline-bar,
+  #port-timeline-bar {
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 12px;
+    gap: 8px;
+    position: relative;
+  }
+
+  .tl-btn-group {
+    justify-content: center;
+  }
+
+  .tl-time {
+    text-align: center;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tl-label {
+    text-align: center;
+  }
+
+  .tl-track-wrap {
+    padding: 14px 0 18px;
+  }
+}
+
+/* ── Leaflet overrides ───────────────────────────────── */
+
+.leaflet-container {
+  background: #1a2332 !important;
+  font-family: inherit !important;
+}
+
+.leaflet-tooltip {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .5) !important;
+}
+
+.leaflet-tooltip::before {
+  border-top-color: var(--border-color) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--bg-tertiary) !important;
+}
+
+.leaflet-bar {
+  border-color: var(--border-color) !important;
+}
+
+/* ── Responsive (RWD) ────────────────────────────────── */
+
+@media (max-width: 767.98px) {
+  #main-area .row.h-100 {
+    flex-direction: column;
+  }
+
+  aside#ship-list-pane {
+    height: auto !important;
+    max-height: 180px;
+  }
+
+  #main-content {
+    height: auto !important;
+  }
+
+  #map-panel-pane {
+    height: 220px;
+  }
+
+  #event-list-pane,
+  #crew-panel-pane,
+  #risk-panel-pane {
+    max-height: 220px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #map-panel-pane {
+    height: 260px;
+  }
+}
+
+/* ── Scrollbar ───────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
